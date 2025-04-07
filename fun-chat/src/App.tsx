@@ -1,12 +1,16 @@
 import './App.css';
+import { AboutPage } from './pages/about/about.tsx';
+import { Footer } from './components/footer/footer.tsx';
+import { Header } from './components/header/header.tsx';
 
 function App() {
   return (
     <>
       <div>
+        <Header />
+        <AboutPage />
         <p>heh</p>
-        <a href="https://vite.dev" target="_blank"></a>
-        <a href="https://react.dev" target="_blank"></a>
+        <Footer />
       </div>
     </>
   );
