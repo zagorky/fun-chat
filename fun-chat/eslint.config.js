@@ -4,9 +4,10 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import eslintPluginUnicorn from 'eslint-plugin-unicorn';
-import importPlugin from 'eslint-plugin-import'; //!
+import importPlugin from 'eslint-plugin-import';
 import reactX from 'eslint-plugin-react-x';
 import reactDom from 'eslint-plugin-react-dom';
+import noComments from 'eslint-plugin-no-comments';
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -17,7 +18,7 @@ export default tseslint.config(
       ...tseslint.configs.strict,
       ...tseslint.configs.stylistic,
       eslintPluginUnicorn.configs.recommended,
-      importPlugin.flatConfigs.recommended, //!
+      importPlugin.flatConfigs.recommended,
     ],
     files: ['**/*.{ts,tsx}'],
     settings: {
@@ -48,6 +49,7 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
       'react-x': reactX,
       'react-dom': reactDom,
+      'no-comments': noComments,
     },
     rules: {
       // unicorn
@@ -108,6 +110,7 @@ export default tseslint.config(
         { blankLine: 'always', prev: 'function', next: '*' },
         { blankLine: 'always', prev: '*', next: 'function' },
       ],
+      'no-comments/disallowComments': 'warn',
       // typescript
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/consistent-type-imports': 'error',
