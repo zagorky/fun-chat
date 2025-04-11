@@ -2,13 +2,12 @@ import type { ReactNode } from 'react';
 
 type ButtonProps = {
   children: ReactNode | string;
-  onClick?: () => void;
+  onClick?: (event: React.UIEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 };
 
 export function Button(props: ButtonProps) {
-  const { children, onClick, type } = props;
-
   const style = [
     'min-w-17',
     'size-max',
@@ -28,8 +27,13 @@ export function Button(props: ButtonProps) {
   ];
 
   return (
-    <button className={[...style].join(' ')} onClick={onClick} type={type}>
-      {children}
+    <button
+      className={[...style].join(' ')}
+      onClick={props.onClick}
+      type={props.type}
+      disabled={props.disabled}
+    >
+      {props.children}
     </button>
   );
 }
