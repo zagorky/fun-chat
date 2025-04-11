@@ -1,7 +1,13 @@
+import { Header } from '../../components/header/header.tsx';
+import { Footer } from '../../components/footer/footer.tsx';
+import { Header1 } from '../../components/headers/headers.tsx';
+
 export function AboutPage() {
   return (
-    <section>
-      <h1>About Page</h1>
-    </section>
+    <main>
+      <Header />
+      <Header1 title={'About Page'} />
+      <Footer />
+    </main>
   );
 }

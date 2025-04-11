@@ -1,16 +1,10 @@
-import './App.css';
-import { AboutPage } from './pages/about/about.tsx';
-import { Footer } from './components/footer/footer.tsx';
-import { Header } from './components/header/header.tsx';
+import { MainPage } from './pages/main/main.tsx';
 
 function App() {
   return (
     <>
       <div>
-        <Header />
-        <AboutPage />
-        <p>heh</p>
-        <Footer />
+        <MainPage />
       </div>
     </>
   );

@@ -1,14 +1,34 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 type ButtonProps = {
   children: ReactNode | string;
   onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
 };
 
 export function Button(props: ButtonProps) {
-  const { children, onClick, ...rest } = props;
+  const { children, onClick, type } = props;
+
+  const style = [
+    'min-w-17',
+    'size-max',
+    'px-1',
+    'py-1',
+    'border',
+    'border-gray-300',
+    'bg-emerald-500',
+    'text-white',
+    'rounded-lg',
+    'hover:bg-emerald-900',
+    'm-2',
+    'cursor-pointer',
+    'disabled:bg-rose-300',
+    'disabled:opacity-60',
+    'disabled:pointer-events-none',
+  ];
+
   return (
-    <button {...rest} onClick={onClick}>
+    <button className={[...style].join(' ')} onClick={onClick} type={type}>
       {children}
     </button>
   );
