@@ -1,12 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import App from './App.tsx';
 import { assertIsNonNullable } from '@powwow-js/core';
+import App from './App.tsx';
 import { StrictMode } from 'react';
 
-const root = document.querySelector('#root');
-assertIsNonNullable(root);
-createRoot(root).render(
+const rootElement = document.querySelector('#root');
+assertIsNonNullable(rootElement);
+createRoot(rootElement).render(
   <StrictMode>
     <App />
   </StrictMode>,

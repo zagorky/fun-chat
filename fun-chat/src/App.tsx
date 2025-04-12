@@ -1,6 +1,8 @@
-import { AuthorizationPage } from './pages/authorization-page/authorization-page.tsx';
 import { useEffect } from 'react';
 import { connectSocket } from './socket.ts';
+import { RouterProvider } from '@tanstack/react-router';
+import { router } from './router.tsx';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
 function App() {
   useEffect(() => {
@@ -8,9 +10,8 @@ function App() {
   }, []);
   return (
     <>
-      <div>
-        <AuthorizationPage />
-      </div>
+      <RouterProvider router={router} />
+      <TanStackRouterDevtools router={router} />
     </>
   );
 }

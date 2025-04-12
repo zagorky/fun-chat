@@ -9,7 +9,7 @@ type ButtonProps = {
 
 export function Button(props: ButtonProps) {
   const style = [
-    'min-w-17',
+    'min-w-24',
     'size-max',
     'px-1',
     'py-1',

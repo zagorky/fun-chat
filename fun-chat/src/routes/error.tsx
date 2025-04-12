@@ -1,5 +1,5 @@
-import { Footer } from '../../components/footer/footer.tsx';
-import { Header2 } from '../../components/headers/headers.tsx';
+import { Footer } from '../components/footer/footer.tsx';
+import { Header2 } from '../components/headers/headers.tsx';
 
 export function ErrorPage() {
   return (

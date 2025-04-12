@@ -1,5 +1,5 @@
 import React from 'react';
-import type { InitialStateType } from '../../pages/authorization-page/authorization-page.tsx';
+import type { InitialStateType } from '../../routes/authorization-page.tsx';
 import { AuthorizationInput } from '../authorization-input/authorization-input.tsx';
 import { Button } from '../button/button.tsx';
 
