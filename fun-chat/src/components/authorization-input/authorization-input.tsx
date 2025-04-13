@@ -27,19 +27,17 @@ export function AuthorizationInput(props: AuthorizationInputProps) {
   ];
 
   return (
-    <React.Fragment>
-      <label htmlFor={props.id}>
-        {props.label}
-        <input
-          className={[...style].join(' ')}
-          type={props.type}
-          id={props.id}
-          name={props.id}
-          placeholder={props.placeholder}
-          value={props.value}
-          onChange={props.onChange}
-        />
-      </label>
-    </React.Fragment>
+    <label htmlFor={props.id}>
+      {props.label}
+      <input
+        className={[...style].join(' ')}
+        type={props.type}
+        id={props.id}
+        name={props.id}
+        placeholder={props.placeholder}
+        value={props.value}
+        onChange={props.onChange}
+      />
+    </label>
   );
 }

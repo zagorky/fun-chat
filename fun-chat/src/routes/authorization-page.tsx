@@ -143,17 +143,6 @@ export default function AuthorizationPage() {
       <Header />
       <main>
         <Header1 title={'Authorization Page'} />
-        {form.authError && (
-          <div>
-            {form.authError === 'incorrect password' && 'Invalid password'}
-            {form.authError === 'there is no user with this login' && 'User not found'}
-            {form.authError === 'a user with this login is already authorized' &&
-              'User already logged in'}
-            {form.authError === 'the user was not authorized' && 'User not authorized'}
-            {form.authError === 'another user is already authorized in this connection' &&
-              'Another user already authorized in this connection'}
-          </div>
-        )}
         <AuthorizationForm
           state={form}
           onPasswordChange={(event) =>
