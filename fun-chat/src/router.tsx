@@ -1,4 +1,4 @@
-import { createRouter, createRoute, createRootRoute } from '@tanstack/react-router';
+import { createRouter, createRoute, createRootRoute, redirect } from '@tanstack/react-router';
 import AuthorizationPage from './routes/authorization-page.tsx';
 import MainPage from './routes/main.tsx';
 import AboutPage from './routes/about.tsx';
@@ -6,6 +6,17 @@ import Index from './routes';
 
 const rootRoute = createRootRoute({
   component: Index,
+});
+
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  loader: () => {
+    return redirect({
+      to: '/login',
+      throw: true,
+    });
+  },
 });
 
 const aboutRoute = createRoute({
@@ -26,6 +37,6 @@ const mainRoute = createRoute({
   component: MainPage,
 });
 
-const routeTree = rootRoute.addChildren([loginRoute, aboutRoute, mainRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, loginRoute, aboutRoute, mainRoute]);
 
 export const router = createRouter({ routeTree });
