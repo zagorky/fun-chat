@@ -1,7 +1,7 @@
 import { createRouter, createRoute, createRootRoute, redirect } from '@tanstack/react-router';
 import AuthorizationPage from './routes/authorization-page.tsx';
-import MainPage from './routes/main.tsx';
-import AboutPage from './routes/about.tsx';
+import MainPage from './routes/main-page.tsx';
+import AboutPage from './routes/about-page.tsx';
 import Index from './routes';
 
 const rootRoute = createRootRoute({

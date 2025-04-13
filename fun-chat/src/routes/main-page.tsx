@@ -1,7 +1,6 @@
 import { Form } from '../components/form/form.tsx';
 import { Header } from '../components/header/header.tsx';
 import { Footer } from '../components/footer/footer.tsx';
-import { Header1 } from '../components/headers/headers.tsx';
 import { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useAuthStore } from '../store/use-auth-store.ts';
@@ -19,7 +18,7 @@ export default function MainPage() {
     <>
       <Header />
       <main className={'flex flex-col items-center justify-center'}>
-        <Header1 title={'Chat Page'} />
+        <h1 className="text-2xl font-bold text-pink-600 p-3 text-center">Chat Page</h1>
         <Form />
       </main>
       <Footer />

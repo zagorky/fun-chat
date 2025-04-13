@@ -1,5 +1,4 @@
 import { Button } from '../button/button.tsx';
-import { Header1 } from '../headers/headers.tsx';
 import { Link } from '@tanstack/react-router';
 import { useAuthStore } from '../../store/use-auth-store.ts';
 
@@ -15,8 +14,7 @@ export function Header() {
       <Button type={'button'} disabled={isAuthenticated}>
         <Link to="/login">Login page</Link>
       </Button>
-      <Header1 title={'Popik Chat'} />
-
+      <h1 className="text-2xl font-bold text-pink-600 p-3 text-center">Popik Chat</h1>
       <Button type={'button'} disabled={!isAuthenticated}>
         <Link to="/main">Chat Page</Link>
       </Button>

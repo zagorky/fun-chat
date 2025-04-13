@@ -1,4 +1,3 @@
-import { Header1 } from '../components/headers/headers.tsx';
 import { useEffect } from 'react';
 import { AuthorizationForm } from '../components/authorization-form/authorization-form.tsx';
 import { Header } from '../components/header/header.tsx';
@@ -27,7 +26,7 @@ export default function AuthorizationPage() {
     <>
       <Header />
       <main>
-        <Header1 title={'Authorization Page'} />
+        <h1 className="text-2xl font-bold text-pink-600 p-3 text-center">Authorization Page</h1>
         <AuthorizationForm />
       </main>
       <Footer />
