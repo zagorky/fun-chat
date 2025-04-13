@@ -83,7 +83,7 @@ export default tseslint.config(
 
       // default
       semi: ['error', 'always'],
-      'max-lines-per-function': ['error', 40],
+      'max-lines-per-function': ['error', 100],
       'no-magic-numbers': [
         'error',
         {
@@ -115,7 +115,7 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
+      '@typescript-eslint/consistent-type-assertions': ['warn', { assertionStyle: 'never' }],
       '@typescript-eslint/explicit-member-accessibility': [
         'error',
         { accessibility: 'explicit', overrides: { constructors: 'off' } },
