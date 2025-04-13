@@ -1,55 +1,63 @@
-import React from 'react';
-import type { InitialStateType } from '../../routes/authorization-page.tsx';
 import { AuthorizationInput } from '../authorization-input/authorization-input.tsx';
 import { Button } from '../button/button.tsx';
+import { useAuthStore } from '../../store/use-auth-store.ts';
+import { useCallback } from 'react';
 
-type AuthorizationFormProps = {
-  state: InitialStateType;
-  onLoginChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+export const AuthorizationForm = () => {
+  const login = useAuthStore((state) => state.login);
+  const password = useAuthStore((state) => state.password);
+  const errors = useAuthStore((state) => state.errors);
+  const authError = useAuthStore((state) => state.authError);
+  const setLogin = useAuthStore((state) => state.setLogin);
+  const setPassword = useAuthStore((state) => state.setPassword);
+  const validateAndSubmit = useAuthStore((state) => state.validateAndSubmit);
 
-  onSubmit: (event: React.FormEvent) => void;
-};
-export const AuthorizationForm = (props: AuthorizationFormProps) => {
-  const { state, onLoginChange, onPasswordChange, onSubmit } = props;
   const formStyle = ['flex', 'items-center', 'justify-center', 'flex-col'];
 
+  const handleLoginChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setLogin(event.target.value);
+    },
+    [setLogin],
+  );
+
+  const handlePasswordChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(event.target.value);
+    },
+    [setPassword],
+  );
+
   return (
-    <form className={[...formStyle].join(' ')} name={'authForm'} onSubmit={onSubmit}>
+    <form className={[...formStyle].join(' ')} name={'authForm'} onSubmit={validateAndSubmit}>
       <AuthorizationInput
         type={'text'}
         id={'login'}
         placeholder={'Your login'}
         label={'Login'}
-        value={state.login}
-        onChange={onLoginChange}
+        value={login}
+        onChange={handleLoginChange}
       />
       <AuthorizationInput
         type={'password'}
         id={'password'}
         placeholder={'Your password'}
         label={'Password'}
-        value={state.password}
-        onChange={onPasswordChange}
+        value={password}
+        onChange={handlePasswordChange}
       />
-      <Button
-        type={'submit'}
-        disabled={
-          !!state.errors.login || !!state.errors.password || !state.login || !state.password
-        }
-      >
+      <Button type={'submit'} disabled={!!errors.login || !!errors.password || !login || !password}>
         Login
       </Button>
-      {state.errors.password && <p>{state.errors.password}</p>}
-      {state.errors.login && <p>{state.errors.login}</p>}
-      {state.authError && (
+      {errors.password && <p>{errors.password}</p>}
+      {errors.login && <p>{errors.login}</p>}
+      {authError && (
         <div>
-          {state.authError === 'incorrect password' && 'Invalid password'}
-          {state.authError === 'there is no user with this login' && 'User not found'}
-          {state.authError === 'a user with this login is already authorized' &&
-            'User already logged in'}
-          {state.authError === 'the user was not authorized' && 'User not authorized'}
-          {state.authError === 'another user is already authorized in this connection' &&
+          {authError === 'incorrect password' && 'Invalid password'}
+          {authError === 'there is no user with this login' && 'User not found'}
+          {authError === 'a user with this login is already authorized' && 'User already logged in'}
+          {authError === 'the user was not authorized' && 'User not authorized'}
+          {authError === 'another user is already authorized in this connection' &&
             'Another user already authorized in this connection'}
         </div>
       )}
