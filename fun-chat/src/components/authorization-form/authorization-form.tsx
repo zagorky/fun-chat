@@ -13,8 +13,6 @@ export const AuthorizationForm = () => {
   const validateAndSubmit = useAuthStore((state) => state.validateAndSubmit);
   const clearAuthError = useAuthStore((state) => state.clearAuthError);
 
-  const formStyle = ['flex', 'items-center', 'justify-center', 'flex-col'];
-
   const handleLoginChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setLogin(event.target.value);
@@ -32,7 +30,11 @@ export const AuthorizationForm = () => {
   );
 
   return (
-    <form className={[...formStyle].join(' ')} name={'authForm'} onSubmit={validateAndSubmit}>
+    <form
+      className="flex items-center justify-center flex-col"
+      name={'authForm'}
+      onSubmit={validateAndSubmit}
+    >
       <AuthorizationInput
         type={'text'}
         id={'login'}

@@ -14,16 +14,20 @@ export function Button(props: ButtonProps) {
     'px-1',
     'py-1',
     'border',
+    'transition-all',
+    'duration-200',
+    'ease-in-out',
     'border-gray-300',
     'bg-emerald-500',
     'text-white',
     'rounded-lg',
     'hover:bg-emerald-900',
-    'm-2',
     'cursor-pointer',
     'disabled:bg-rose-300',
     'disabled:opacity-60',
     'disabled:pointer-events-none',
+    `max-[520px]:min-w-15`,
+    `max-[520px]:text-xs`,
   ];
 
   return (

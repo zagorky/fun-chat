@@ -5,7 +5,9 @@ export function ErrorPage() {
   return (
     <main>
       <Header />
-      <h1 className="text-2xl font-bold text-pink-600 p-3 text-center">Error Page</h1>
+      <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[520px]:text-xl  transition-all duration-200 ease-in-out">
+        Error Page
+      </h1>
       <p>Page Not Found</p>
       <Footer />
     </main>
