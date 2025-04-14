@@ -83,7 +83,7 @@ export default tseslint.config(
 
       // default
       semi: ['error', 'always'],
-      'max-lines-per-function': ['error', 80],
+      'max-lines-per-function': ['error', 70],
       'no-magic-numbers': [
         'error',
         {

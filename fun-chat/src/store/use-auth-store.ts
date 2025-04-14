@@ -12,12 +12,15 @@ type AuthStore = {
   };
   authError: string;
   isAuthenticated: boolean;
+
   setLogin: (login: string) => void;
   setPassword: (password: string) => void;
   setErrors: (errors: { login: string; password: string }) => void;
   loginSuccess: () => void;
   loginFailure: (error: string) => void;
   validateAndSubmit: (event: React.FormEvent) => void;
+  clearAuthError: () => void;
+  logout: () => void;
 };
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
@@ -81,6 +84,34 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         },
       },
     });
+  },
+  clearAuthError: () => set({ authError: '' }),
+  logout: () => {
+    const currentState = get();
+
+    set({
+      login: '',
+      password: '',
+      errors: {
+        login: '',
+        password: '',
+      },
+      authError: '',
+      isAuthenticated: false,
+    });
+
+    if (currentState.isAuthenticated) {
+      sendWebSocketMessage({
+        id: crypto.randomUUID(),
+        type: 'USER_LOGOUT',
+        payload: {
+          user: {
+            login: currentState.login,
+            password: currentState.password,
+          },
+        },
+      });
+    }
   },
 }));
 

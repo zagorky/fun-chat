@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/use-auth-store.ts';
 
 export function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
+  const logout = useAuthStore((state) => state.logout);
   const style = ['flex', 'items-center', 'w-full', 'justify-between', 'p-4'];
   return (
     <header className={[...style].join(' ')}>
@@ -18,12 +18,7 @@ export function Header() {
       <Button type={'button'} disabled={!isAuthenticated}>
         <Link to="/main">Chat Page</Link>
       </Button>
-      <Button
-        onClick={() => {
-          console.log(' Header heh');
-        }}
-        disabled={!isAuthenticated}
-      >
+      <Button onClick={logout} disabled={!isAuthenticated}>
         Exit
       </Button>
     </header>
