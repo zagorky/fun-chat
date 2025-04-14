@@ -3,8 +3,8 @@ export function validateLogin(login: string) {
   if (!login) {
     return 'Login is required';
   }
-  if (login.length <= MIN_LENGTH) {
-    return 'Login must be at least 4 latin letter';
+  if (login.length < MIN_LENGTH) {
+    return 'Login must be at least 4 symbols';
   }
   return '';
 }

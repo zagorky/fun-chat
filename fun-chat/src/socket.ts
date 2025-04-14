@@ -1,6 +1,7 @@
 import { hasSome } from '@powwow-js/core';
 import type { ClientRequest, ServerResponse } from './types/types.ts';
 import { isMessage } from './types/helpers.ts';
+import { handleServerMessage } from './store/use-auth-store.ts';
 
 let socket: WebSocket | null = null;
 const messageHandlers: ((data: ServerResponse) => void)[] = [];
@@ -19,6 +20,7 @@ export function connectSocket(url: string) {
       if (isMessage<ServerResponse>(data)) {
         if (data.type === 'ERROR') {
           console.error('Server Error:', data.payload.error);
+          handleServerMessage(data);
         } else {
           messageHandlers.forEach((handler) => handler(data));
         }

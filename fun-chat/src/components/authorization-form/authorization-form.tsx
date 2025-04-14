@@ -11,19 +11,22 @@ export const AuthorizationForm = () => {
   const setLogin = useAuthStore((state) => state.setLogin);
   const setPassword = useAuthStore((state) => state.setPassword);
   const validateAndSubmit = useAuthStore((state) => state.validateAndSubmit);
+  const clearAuthError = useAuthStore((state) => state.clearAuthError);
 
   const formStyle = ['flex', 'items-center', 'justify-center', 'flex-col'];
 
   const handleLoginChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setLogin(event.target.value);
+      clearAuthError();
     },
-    [setLogin],
+    [setLogin, clearAuthError],
   );
 
   const handlePasswordChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setPassword(event.target.value);
+      clearAuthError();
     },
     [setPassword],
   );
