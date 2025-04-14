@@ -10,7 +10,7 @@ export default function AboutPage() {
           About Page{' '}
         </h1>
         <p className="text-gray-600 text-center p-5 text-xl">
-          Popik Chat is a real-time messaging web application built with WebSocket for instant
+          Fun Chat is a real-time messaging web application built with WebSocket for instant
           communication.
         </p>
         <p className={'text-gray-600 text-center p-5 text-xl'}>
