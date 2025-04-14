@@ -1,10 +1,12 @@
 import { hasSome } from '@powwow-js/core';
 import type { ClientRequest, ServerResponse } from './types/types.ts';
 import { isMessage } from './types/helpers.ts';
-import { handleServerMessage } from './store/use-auth-store.ts';
+import { handleServerMessageForAuth } from './store/use-auth-store.ts';
+import { handleServerMassageForChat } from './store/use-chat-store.ts';
 
 let socket: WebSocket | null = null;
 const messageHandlers: ((data: ServerResponse) => void)[] = [];
+const RECONNECT_INTERVAL = 3000;
 
 export function connectSocket(url: string) {
   socket = new WebSocket(url);
@@ -20,7 +22,8 @@ export function connectSocket(url: string) {
       if (isMessage<ServerResponse>(data)) {
         if (data.type === 'ERROR') {
           console.error('Server Error:', data.payload.error);
-          handleServerMessage(data);
+          handleServerMessageForAuth(data);
+          handleServerMassageForChat(data);
         } else {
           messageHandlers.forEach((handler) => handler(data));
         }
@@ -30,9 +33,10 @@ export function connectSocket(url: string) {
     }
   });
 
-  socket.addEventListener('close', () => {
-    const delay = 3000;
-    setTimeout(() => connectSocket(url), delay);
+  socket.addEventListener('close', (event) => {
+    console.log(`WebSocket closed: ${event.reason}`);
+
+    setTimeout(() => connectSocket(url), RECONNECT_INTERVAL);
   });
 }
 

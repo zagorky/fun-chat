@@ -147,7 +147,7 @@ export const useAuthStore = create<AuthStore>()(
   ),
 );
 
-export const handleServerMessage = (data: ServerResponse) => {
+export const handleServerMessageForAuth = (data: ServerResponse) => {
   if (data.type === 'USER_LOGIN') {
     if (data.payload.user.isLogined) {
       useAuthStore.getState().loginSuccess();
