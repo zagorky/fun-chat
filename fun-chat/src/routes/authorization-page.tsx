@@ -3,7 +3,7 @@ import { AuthorizationForm } from '../components/authorization-form/authorizatio
 import { Header } from '../components/header/header.tsx';
 import { Footer } from '../components/footer/footer.tsx';
 import { useNavigate } from '@tanstack/react-router';
-import { handleServerMessage, useAuthStore } from '../store/use-auth-store.ts';
+import { handleServerMessageForAuth, useAuthStore } from '../store/use-auth-store.ts';
 import { subscribeToMessages } from '../socket.ts';
 
 export default function AuthorizationPage() {
@@ -18,7 +18,7 @@ export default function AuthorizationPage() {
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
-    const cleanup = subscribeToMessages(handleServerMessage);
+    const cleanup = subscribeToMessages(handleServerMessageForAuth);
     return () => cleanup();
   }, []);
 

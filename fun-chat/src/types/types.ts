@@ -5,7 +5,7 @@ type MessageStatusType = {
   isDeleted?: boolean;
 };
 
-type MessageType = {
+export type MessageType = {
   id: string;
   to: string;
   from: string;
@@ -35,6 +35,12 @@ type AuthError =
   | 'another user is already authorized in this connection';
 
 type ErrorType = AuthError | HistoryError | RequestError | MessageError;
+
+export type UserType = {
+  login: string;
+  password?: string;
+  isLogined?: boolean;
+};
 
 export type BaseMessage<T extends string, P> = {
   id: string | null;
