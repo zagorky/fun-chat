@@ -122,6 +122,8 @@ export const handleServerMessage = (data: ServerResponse) => {
     } else {
       useAuthStore.getState().loginFailure('Login failed: unknown reason');
     }
+  } else if (data.type === 'USER_LOGOUT' && !data.payload.user.isLogined) {
+    useAuthStore.getState().logout();
   }
   if (data.type === 'ERROR') {
     const error = data.payload.error;
