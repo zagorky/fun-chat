@@ -10,7 +10,7 @@ export function ErrorPage() {
           Error Page
         </h1>
         <p className="text-xl">🥲 Page Not Found 🥲</p>
-        <img src="./src/assets/sasa.jpg" alt={'error page '} />
+        <img src={'/sasa.jpg'} alt={'error page '} />
       </main>
       <Footer />
     </>
