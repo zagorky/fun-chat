@@ -19,7 +19,9 @@ export default function AuthorizationPage() {
 
   useEffect(() => {
     const cleanup = subscribeToMessages(handleServerMessageForAuth);
-    return () => cleanup();
+    return () => {
+      cleanup();
+    };
   }, []);
 
   return (

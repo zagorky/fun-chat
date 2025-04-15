@@ -1,10 +1,10 @@
 import { Button } from '../button/button.tsx';
 import { Link } from '@tanstack/react-router';
 import { useAuthStore } from '../../store/use-auth-store.ts';
+import { handleLogout } from '../../utils/authorization.ts';
 
 export function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const logout = useAuthStore((state) => state.logout);
   const userName = useAuthStore((state) => state.login);
 
   return (
@@ -22,7 +22,7 @@ export function Header() {
         <Button type={'button'} disabled={!isAuthenticated}>
           <Link to="/main">Chat Page</Link>
         </Button>
-        <Button onClick={logout} disabled={!isAuthenticated}>
+        <Button onClick={handleLogout} disabled={!isAuthenticated}>
           Exit
         </Button>{' '}
       </div>

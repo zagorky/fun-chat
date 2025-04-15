@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { validateLogin, validatePassword } from '../utils/utilities.ts';
-import { sendWebSocketMessage } from '../socket.ts';
+import { validateLogin, validatePassword } from '../utils/authorization.ts';
 import type { ServerResponse } from '../types/types.ts';
 import { persist, devtools, createJSONStorage } from 'zustand/middleware';
 
@@ -13,14 +12,11 @@ type AuthStore = {
   };
   authError: string;
   isAuthenticated: boolean;
-  sessionToken: string;
-
   setLogin: (login: string) => void;
   setPassword: (password: string) => void;
   setErrors: (errors: { login: string; password: string }) => void;
   loginSuccess: () => void;
   loginFailure: (error: string) => void;
-  validateAndSubmit: (event: React.FormEvent) => void;
   clearAuthError: () => void;
   logout: () => void;
 };
@@ -28,7 +24,7 @@ type AuthStore = {
 export const useAuthStore = create<AuthStore>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set) => ({
         login: '',
         password: '',
         errors: {
@@ -37,7 +33,6 @@ export const useAuthStore = create<AuthStore>()(
         },
         authError: '',
         isAuthenticated: false,
-        sessionToken: '',
 
         setLogin: (login) =>
           set(
@@ -72,44 +67,9 @@ export const useAuthStore = create<AuthStore>()(
         loginFailure: (error) =>
           set({ authError: error, isAuthenticated: false }, false, 'loginFailure'),
 
-        validateAndSubmit: (event) => {
-          event.preventDefault();
-          const { login, password } = get();
-
-          const loginError = validateLogin(login);
-          const passwordError = validatePassword(password);
-
-          if (loginError || passwordError) {
-            set(
-              {
-                errors: {
-                  login: loginError,
-                  password: passwordError,
-                },
-              },
-              false,
-              'validateAndSubmit/error',
-            );
-            return;
-          }
-
-          sendWebSocketMessage({
-            id: crypto.randomUUID(),
-            type: 'USER_LOGIN',
-            payload: {
-              user: {
-                login: login,
-                password: password,
-              },
-            },
-          });
-        },
-
         clearAuthError: () => set({ authError: '' }, false, 'clearAuthError'),
 
         logout: () => {
-          const currentState = get();
-
           set(
             {
               login: '',
@@ -124,19 +84,6 @@ export const useAuthStore = create<AuthStore>()(
             false,
             'logout/reset',
           );
-
-          if (currentState.isAuthenticated) {
-            sendWebSocketMessage({
-              id: crypto.randomUUID(),
-              type: 'USER_LOGOUT',
-              payload: {
-                user: {
-                  login: currentState.login,
-                  password: currentState.password,
-                },
-              },
-            });
-          }
         },
       }),
       {

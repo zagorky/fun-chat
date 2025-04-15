@@ -2,6 +2,7 @@ import { Input } from '../input/input.tsx';
 import { Button } from '../button/button.tsx';
 import { useAuthStore } from '../../store/use-auth-store.ts';
 import { useCallback } from 'react';
+import { handleLoginSubmit } from '../../utils/authorization.ts';
 
 export const AuthorizationForm = () => {
   const login = useAuthStore((state) => state.login);
@@ -10,7 +11,6 @@ export const AuthorizationForm = () => {
   const authError = useAuthStore((state) => state.authError);
   const setLogin = useAuthStore((state) => state.setLogin);
   const setPassword = useAuthStore((state) => state.setPassword);
-  const validateAndSubmit = useAuthStore((state) => state.validateAndSubmit);
   const clearAuthError = useAuthStore((state) => state.clearAuthError);
 
   const handleLoginChange = useCallback(
@@ -26,14 +26,14 @@ export const AuthorizationForm = () => {
       setPassword(event.target.value);
       clearAuthError();
     },
-    [setPassword],
+    [setPassword, clearAuthError],
   );
 
   return (
     <form
       className="flex items-center justify-center flex-col"
       name={'authForm'}
-      onSubmit={validateAndSubmit}
+      onSubmit={handleLoginSubmit}
     >
       <Input
         type={'text'}

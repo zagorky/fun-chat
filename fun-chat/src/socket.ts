@@ -1,8 +1,7 @@
 import { hasSome } from '@powwow-js/core';
 import type { ClientRequest, ServerResponse } from './types/types.ts';
 import { isMessage } from './types/helpers.ts';
-import { handleServerMessageForAuth, useAuthStore } from './store/use-auth-store.ts';
-import { handleServerMassageForChat } from './store/use-chat-store.ts';
+import { useAuthStore } from './store/use-auth-store.ts';
 
 let socket: WebSocket | null = null;
 const messageHandlers: ((data: ServerResponse) => void)[] = [];
@@ -31,13 +30,7 @@ export function connectSocket(url: string) {
       const data: unknown = JSON.parse(event.data);
       console.log('Received message', data);
       if (isMessage<ServerResponse>(data)) {
-        if (data.type === 'ERROR') {
-          console.error('Server Error:', data.payload.error);
-          handleServerMessageForAuth(data);
-          handleServerMassageForChat(data);
-        } else {
-          messageHandlers.forEach((handler) => handler(data));
-        }
+        messageHandlers.forEach((handler) => handler(data));
       }
     } catch (error) {
       console.error('Invalid message format', error);
