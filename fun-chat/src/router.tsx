@@ -3,6 +3,7 @@ import AuthorizationPage from './routes/authorization-page.tsx';
 import MainPage from './routes/main-page.tsx';
 import AboutPage from './routes/about-page.tsx';
 import Index from './routes';
+import { ErrorPage } from './routes/error-page.tsx';
 
 const rootRoute = createRootRoute({
   component: Index,
@@ -37,6 +38,18 @@ const mainRoute = createRoute({
   component: MainPage,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, loginRoute, aboutRoute, mainRoute]);
+const errorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/*',
+  component: ErrorPage,
+});
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  loginRoute,
+  aboutRoute,
+  mainRoute,
+  errorRoute,
+]);
 
 export const router = createRouter({ routeTree });
