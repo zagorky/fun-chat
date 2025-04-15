@@ -7,17 +7,30 @@ type ChatStore = {
   currentUser: string;
   users: UserType[];
   error: string | null;
+  searchQuery: string;
+  filteredUsers: UserType[];
 
   getUsers: () => void;
+  setSearchQuery: (query: string) => void;
 };
 
 export const useChatStore = create<ChatStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         currentUser: '',
         users: [],
         error: null,
+        searchQuery: '',
+        filteredUsers: [],
+        setSearchQuery: (query) => {
+          set({
+            searchQuery: query,
+            filteredUsers: get().users.filter((user) =>
+              user.login.toLowerCase().includes(query.toLowerCase()),
+            ),
+          });
+        },
 
         getUsers: () => {
           set({ error: null });

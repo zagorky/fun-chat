@@ -1,6 +1,6 @@
 import React from 'react';
 
-type AuthorizationInputProps = {
+type InputProps = {
   id: string;
   label: string;
   type: string;
@@ -9,7 +9,7 @@ type AuthorizationInputProps = {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export function AuthorizationInput(props: AuthorizationInputProps) {
+export function Input(props: InputProps) {
   const style = [
     'px-4',
     'py-2',

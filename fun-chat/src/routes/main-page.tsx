@@ -34,7 +34,7 @@ export default function MainPage() {
         <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[520px]:text-xl  transition-all duration-200 ease-in-out">
           Chat Page
         </h1>
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 max-[720px]:grid-cols-1 transition-all duration-200 ease-in-out">
           <UserList />
           <Chat />
         </div>

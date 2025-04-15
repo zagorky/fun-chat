@@ -1,4 +1,4 @@
-import { AuthorizationInput } from '../authorization-input/authorization-input.tsx';
+import { Input } from '../input/input.tsx';
 import { Button } from '../button/button.tsx';
 import { useAuthStore } from '../../store/use-auth-store.ts';
 import { useCallback } from 'react';
@@ -35,7 +35,7 @@ export const AuthorizationForm = () => {
       name={'authForm'}
       onSubmit={validateAndSubmit}
     >
-      <AuthorizationInput
+      <Input
         type={'text'}
         id={'login'}
         placeholder={'Your login'}
@@ -43,7 +43,7 @@ export const AuthorizationForm = () => {
         value={login}
         onChange={handleLoginChange}
       />
-      <AuthorizationInput
+      <Input
         type={'password'}
         id={'password'}
         placeholder={'Your password'}
