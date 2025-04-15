@@ -16,7 +16,7 @@ export function Header() {
         <Button type={'button'} disabled={isAuthenticated}>
           <Link to="/login">Login page</Link>
         </Button>
-        <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[520px]:text-xl  transition-all duration-200 ease-in-out">
+        <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[540px]:text-xl  transition-all duration-200 ease-in-out">
           Fun Chat
         </h1>
         <Button type={'button'} disabled={!isAuthenticated}>

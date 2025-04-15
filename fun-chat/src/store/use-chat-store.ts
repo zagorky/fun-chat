@@ -1,14 +1,17 @@
 import { create } from 'zustand';
 import { persist, devtools, createJSONStorage } from 'zustand/middleware';
 import { sendWebSocketMessage } from '../socket.ts';
-import type { ServerResponse, UserType } from '../types/types.ts';
+import type { MessageType, ServerResponse, UserType } from '../types/types.ts';
 
 type ChatStore = {
   users: UserType[];
   activeUsers: UserType[];
+  selectedUser: UserType | null;
+  messages: MessageType[];
   error: string | null;
   searchQuery: string;
   getUsers: () => void;
+  setSelectedUser: (user: UserType) => void;
 };
 
 export const useChatStore = create<ChatStore>()(
@@ -19,6 +22,8 @@ export const useChatStore = create<ChatStore>()(
         activeUsers: [],
         error: null,
         searchQuery: '',
+        selectedUser: null,
+        messages: [],
         getUsers: () => {
           set({ error: null });
 
@@ -32,6 +37,19 @@ export const useChatStore = create<ChatStore>()(
             id: crypto.randomUUID(),
             type: 'USER_INACTIVE',
             payload: null,
+          });
+        },
+        setSelectedUser: (user) => {
+          set({ selectedUser: user });
+
+          sendWebSocketMessage({
+            id: crypto.randomUUID(),
+            type: 'MSG_FROM_USER',
+            payload: {
+              user: {
+                login: user.login,
+              },
+            },
           });
         },
       }),
@@ -98,6 +116,10 @@ export function handleServerMassageForChat(data: ServerResponse) {
           users: state.users.map((u) => (u.login === updatedUser.login ? updatedUser : u)),
         };
       });
+      break;
+    }
+    case 'MSG_FROM_USER': {
+      useChatStore.setState({ messages: data.payload.messages });
       break;
     }
   }
