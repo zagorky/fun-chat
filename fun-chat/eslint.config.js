@@ -10,7 +10,7 @@ import reactDom from 'eslint-plugin-react-dom';
 import noComments from 'eslint-plugin-no-comments';
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'src/routeTree.gen.ts'] },
   {
     extends: [
       js.configs.recommended,
@@ -83,7 +83,7 @@ export default tseslint.config(
 
       // default
       semi: ['error', 'always'],
-      'max-lines-per-function': ['error', 100],
+      'max-lines-per-function': ['error', 70],
       'no-magic-numbers': [
         'error',
         {
