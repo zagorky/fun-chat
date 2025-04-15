@@ -2,11 +2,11 @@ import { createRouter, createRoute, createRootRoute, redirect } from '@tanstack/
 import AuthorizationPage from './routes/authorization-page.tsx';
 import MainPage from './routes/main-page.tsx';
 import AboutPage from './routes/about-page.tsx';
-import Index from './routes';
+import __root from './routes/__root.tsx';
 import { ErrorPage } from './routes/error-page.tsx';
 
 const rootRoute = createRootRoute({
-  component: Index,
+  component: __root,
 });
 
 const indexRoute = createRoute({
