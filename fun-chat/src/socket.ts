@@ -1,7 +1,7 @@
 import { hasSome } from '@powwow-js/core';
 import type { ClientRequest, ServerResponse } from './types/types.ts';
 import { isMessage } from './types/helpers.ts';
-import { handleServerMessageForAuth } from './store/use-auth-store.ts';
+import { handleServerMessageForAuth, useAuthStore } from './store/use-auth-store.ts';
 import { handleServerMassageForChat } from './store/use-chat-store.ts';
 
 let socket: WebSocket | null = null;
@@ -10,6 +10,17 @@ const RECONNECT_INTERVAL = 3000;
 
 export function connectSocket(url: string) {
   socket = new WebSocket(url);
+
+  socket.addEventListener('open', () => {
+    const { isAuthenticated, login, password } = useAuthStore.getState();
+    if (isAuthenticated && login && password) {
+      sendWebSocketMessage({
+        id: crypto.randomUUID(),
+        type: 'USER_LOGIN',
+        payload: { user: { login, password } },
+      });
+    }
+  });
 
   socket.addEventListener('message', (event: MessageEvent) => {
     try {
@@ -35,7 +46,6 @@ export function connectSocket(url: string) {
 
   socket.addEventListener('close', (event) => {
     console.log(`WebSocket closed: ${event.reason}`);
-
     setTimeout(() => connectSocket(url), RECONNECT_INTERVAL);
   });
 }

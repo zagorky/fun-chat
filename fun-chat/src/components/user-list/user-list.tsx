@@ -40,9 +40,7 @@ export function UserList() {
       />
       <ul>
         {filteredUsers.map((user) => (
-          <li key={user.login}>
-            😉{user.login} - {user.isLogined}
-          </li>
+          <li key={user.login}>😉{user.login}</li>
         ))}
       </ul>
     </section>

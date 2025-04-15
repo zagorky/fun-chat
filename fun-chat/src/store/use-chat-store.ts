@@ -4,34 +4,19 @@ import { sendWebSocketMessage } from '../socket.ts';
 import type { ServerResponse, UserType } from '../types/types.ts';
 
 type ChatStore = {
-  currentUser: string;
   users: UserType[];
   error: string | null;
   searchQuery: string;
-  filteredUsers: UserType[];
-
   getUsers: () => void;
-  setSearchQuery: (query: string) => void;
 };
 
 export const useChatStore = create<ChatStore>()(
   devtools(
     persist(
-      (set, get) => ({
-        currentUser: '',
+      (set) => ({
         users: [],
         error: null,
         searchQuery: '',
-        filteredUsers: [],
-        setSearchQuery: (query) => {
-          set({
-            searchQuery: query,
-            filteredUsers: get().users.filter((user) =>
-              user.login.toLowerCase().includes(query.toLowerCase()),
-            ),
-          });
-        },
-
         getUsers: () => {
           set({ error: null });
           sendWebSocketMessage({
@@ -50,13 +35,34 @@ export const useChatStore = create<ChatStore>()(
 );
 
 export function handleServerMassageForChat(data: ServerResponse) {
-  if (data.type === 'USER_ACTIVE') {
-    useChatStore.setState({
-      users: data.payload.users,
-    });
-  } else if (data.type === 'ERROR') {
-    useChatStore.setState({
-      error: data.payload.error,
-    });
+  switch (data.type) {
+    case 'USER_ACTIVE': {
+      useChatStore.setState({
+        users: data.payload.users,
+      });
+
+      break;
+    }
+    case 'ERROR': {
+      useChatStore.setState({
+        error: data.payload.error,
+      });
+
+      break;
+    }
+    case 'USER_EXTERNAL_LOGOUT': {
+      useChatStore.setState({
+        users: [...useChatStore.getState().users].filter(
+          (user) => user.login !== data.payload.user.login,
+        ),
+      });
+      break;
+    }
+    case 'USER_EXTERNAL_LOGIN': {
+      useChatStore.setState({
+        users: [...useChatStore.getState().users, data.payload.user],
+      });
+      break;
+    }
   }
 }

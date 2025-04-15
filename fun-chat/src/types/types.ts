@@ -50,7 +50,7 @@ export type BaseMessage<T extends string, P> = {
 
 export type ServerResponse =
   | BaseMessage<
-      'USER_LOGIN' | 'USER_LOGOUT',
+      'USER_LOGIN' | 'USER_LOGOUT' | 'USER_EXTERNAL_LOGIN' | 'USER_EXTERNAL_LOGOUT',
       {
         user: {
           login: string;
@@ -62,13 +62,13 @@ export type ServerResponse =
   | BaseMessage<
       'USER_ACTIVE' | 'USER_INACTIVE',
       {
-        users: [];
+        users: UserType[];
       }
     >
   | BaseMessage<
       'MSG_FROM_USER',
       {
-        messages: [];
+        messages: MessageType[];
       }
     >
   | BaseMessage<
@@ -149,63 +149,6 @@ export type ClientRequest =
         message: {
           id: string;
           text: string;
-        };
-      }
-    >;
-
-export type NotificationRequest =
-  | BaseMessage<
-      'USER_EXTERNAL_LOGIN' | 'USER_EXTERNAL_LOGOUT',
-      {
-        user: {
-          login: string;
-          isLogined: boolean;
-        };
-      }
-    >
-  | BaseMessage<'MSG_SEND', { message: MessageType }>
-  | BaseMessage<
-      'MSG_DELIVER',
-      {
-        message: {
-          id: string;
-          status: {
-            isDelivered: boolean;
-          };
-        };
-      }
-    >
-  | BaseMessage<
-      'MSG_READ',
-      {
-        message: {
-          id: string;
-          status: {
-            isReaded: boolean;
-          };
-        };
-      }
-    >
-  | BaseMessage<
-      'MSG_DELETE',
-      {
-        message: {
-          id: string;
-          status: {
-            isDeleted: boolean;
-          };
-        };
-      }
-    >
-  | BaseMessage<
-      'MSG_EDIT',
-      {
-        message: {
-          id: string;
-          text: string;
-          status: {
-            isEdited: boolean;
-          };
         };
       }
     >;
