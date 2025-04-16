@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { AuthorizationForm } from '../components/authorization-form/authorization-form.tsx';
-import { Header } from '../components/header/header.tsx';
-import { Footer } from '../components/footer/footer.tsx';
 import { useNavigate } from '@tanstack/react-router';
 import { handleServerMessageForAuth, useAuthStore } from '../store/use-auth-store.ts';
 import { subscribeToMessages } from '../socket.ts';
+import { Layout } from '../components/layout/layout.tsx';
 
 export default function AuthorizationPage() {
   const navigate = useNavigate();
@@ -25,15 +24,13 @@ export default function AuthorizationPage() {
   }, []);
 
   return (
-    <>
-      <Header />
+    <Layout>
       <main>
         <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[520px]:text-xl  transition-all duration-200 ease-in-out">
           Authorization Page
         </h1>
         <AuthorizationForm />
       </main>
-      <Footer />
-    </>
+    </Layout>
   );
 }

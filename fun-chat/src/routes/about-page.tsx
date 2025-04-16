@@ -1,10 +1,8 @@
-import { Header } from '../components/header/header.tsx';
-import { Footer } from '../components/footer/footer.tsx';
+import { Layout } from '../components/layout/layout.tsx';
 
 export default function AboutPage() {
   return (
-    <>
-      <Header />
+    <Layout>
       <main className="flex flex-col items-center justify-around max-w-screen">
         <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[520px]:text-xl  transition-all duration-200 ease-in-out">
           About Page{' '}
@@ -18,7 +16,6 @@ export default function AboutPage() {
           networking capabilities.
         </p>
       </main>
-      <Footer />
-    </>
+    </Layout>
   );
 }
