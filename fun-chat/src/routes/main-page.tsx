@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { handleServerMessageForAuth, useAuthStore } from '../store/use-auth-store.ts';
+import { handleServerMessageForAuth, useAuthStore } from '../stores/use-auth-store.ts';
 import { UserList } from '../components/user-list/user-list.tsx';
 import { Chat } from '../components/chat/chat.tsx';
 import { subscribeToMessages } from '../socket.ts';
-import { handleServerMassageForChat } from '../store/use-chat-store.ts';
+import { handleServerMassageForChat, useChatStore } from '../stores/use-chat-store.ts';
 import { Layout } from '../components/layout/layout.tsx';
+import { ServerResponse } from '../types/types.ts';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -18,11 +19,18 @@ export default function MainPage() {
   }, [isAuthenticated, navigate]);
 
   useEffect(() => {
-    const cleanupAuth = subscribeToMessages(handleServerMessageForAuth);
-    const cleanupChat = subscribeToMessages(handleServerMassageForChat);
+    const handleServerMessage = (message: ServerResponse) => {
+      handleServerMessageForAuth(message);
+      handleServerMassageForChat(message);
+      if (message.type === 'USER_EXTERNAL_LOGIN' || message.type === 'USER_EXTERNAL_LOGOUT') {
+        useChatStore.getState().getUsers();
+      }
+    };
+
+    const cleanup = subscribeToMessages(handleServerMessage);
+
     return () => {
-      cleanupAuth();
-      cleanupChat();
+      cleanup();
     };
   }, []);
 
