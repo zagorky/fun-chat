@@ -7,7 +7,7 @@ export function UserListItem(user: UserType) {
 
   return (
     <li className="w-full" key={user.login}>
-      <label className=" flex items-center space-x-3 cursor-pointer has-checked:bg-gray-300 has-checked:ring-gray-300 rounded has-checked:text-teal-900">
+      <label className=" flex p-1 items-center space-x-3 cursor-pointer has-checked:bg-gray-300 has-checked:ring-gray-300 rounded has-checked:text-teal-900">
         <input
           type="radio"
           name="selectedUser"
