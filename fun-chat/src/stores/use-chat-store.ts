@@ -1,19 +1,29 @@
 import { create } from 'zustand';
 import { persist, devtools, createJSONStorage } from 'zustand/middleware';
-import { sendWebSocketMessage } from '../socket.ts';
 import type { MessageType, ServerResponse, UserType } from '../types/types.ts';
 import { useAuthStore } from './use-auth-store.ts';
+import { sendMessageToServer } from '../utils/send-message.ts';
+import { getUsersUtility } from '../utils/get-users.ts';
+import { setSelectedUserUtility } from '../utils/set-selected-user.ts';
 
 type ChatStore = {
   users: UserType[];
   activeUsers: UserType[];
   selectedUser: UserType | null;
   messages: MessageType[];
+  unreadMessages: Record<string, number>;
   error: string | null;
   searchQuery: string;
   getUsers: () => void;
+
   setSelectedUser: (user: UserType) => void;
   sendMessage: (currentUser: string, message: string) => void;
+  incrementUnread: (userLogin: string) => void;
+  resetUnread: (userLogin: string) => void;
+  markAsRead: (userLogin: string) => void;
+  deleteMessage: (messageId: string) => void;
+  editMessage: (messageId: string, text: string) => void;
+  updateMessageStatus: (messageId: string, status: Partial<MessageType['status']>) => void;
 };
 
 export const useChatStore = create<ChatStore>()(
@@ -26,66 +36,66 @@ export const useChatStore = create<ChatStore>()(
         searchQuery: '',
         selectedUser: null,
         messages: [],
-        getUsers: () => {
-          set({ error: null });
-
-          sendWebSocketMessage({
-            id: crypto.randomUUID(),
-            type: 'USER_ACTIVE',
-            payload: null,
-          });
-
-          sendWebSocketMessage({
-            id: crypto.randomUUID(),
-            type: 'USER_INACTIVE',
-            payload: null,
-          });
-        },
-        setSelectedUser: (user) => {
-          set({ selectedUser: user });
-
-          sendWebSocketMessage({
-            id: crypto.randomUUID(),
-            type: 'MSG_FROM_USER',
-            payload: {
-              user: {
-                login: user.login,
-              },
+        unreadMessages: {},
+        incrementUnread: (userLogin) => {
+          set((state) => ({
+            unreadMessages: {
+              ...state.unreadMessages,
+              [userLogin]: (state.unreadMessages[userLogin] || 0) + 1,
             },
-          });
+          }));
         },
+        resetUnread: (userLogin) => {
+          set((state) => ({
+            unreadMessages: {
+              ...state.unreadMessages,
+              [userLogin]: 0,
+            },
+          }));
+        },
+        markAsRead: (userLogin) => {
+          set((state) => ({
+            messages: state.messages.map((message) =>
+              message.from === userLogin && !message.status.isReaded
+                ? { ...message, status: { ...message.status, isReaded: true } }
+                : message,
+            ),
+          }));
+        },
+
+        deleteMessage: (messageId) => {
+          set((state) => ({
+            messages: state.messages.filter((message) => message.id !== messageId),
+          }));
+        },
+        editMessage: (messageId, text) => {
+          set((state) => ({
+            messages: state.messages.map((message) =>
+              message.id === messageId
+                ? {
+                    ...message,
+                    text,
+                    status: { ...message.status, isEdited: true },
+                  }
+                : message,
+            ),
+          }));
+        },
+        updateMessageStatus: (messageId: string, status: Partial<MessageType['status']>) => {
+          set((state) => ({
+            messages: state.messages.map((message) =>
+              message.id === messageId
+                ? { ...message, status: { ...message.status, ...status } }
+                : message,
+            ),
+          }));
+        },
+        getUsers: () => getUsersUtility(),
+        setSelectedUser: (user) => setSelectedUserUtility(user),
         sendMessage: (currentUser, message) => {
           const state = get();
-
           if (!state.selectedUser) return;
-
-          const newMessage: MessageType = {
-            id: crypto.randomUUID(),
-            from: currentUser,
-            to: state.selectedUser.login,
-            text: message,
-            datetime: Date.now(),
-            status: {
-              isDelivered: false,
-              isReaded: false,
-              isEdited: false,
-            },
-          };
-
-          sendWebSocketMessage({
-            id: crypto.randomUUID(),
-            type: 'MSG_SEND',
-            payload: {
-              message: {
-                to: state.selectedUser.login,
-                text: message,
-              },
-            },
-          });
-
-          set({
-            messages: [...state.messages, newMessage].sort((a, b) => a.datetime - b.datetime),
-          });
+          sendMessageToServer(currentUser, state.selectedUser.login, message);
         },
       }),
       {
@@ -178,9 +188,22 @@ export function handleServerMassageForChat(data: ServerResponse) {
           ),
         }));
       }
-      useChatStore.setState((state) => ({
-        messages: [...state.messages, message].sort((a, b) => a.datetime - b.datetime),
-      }));
+      break;
+    }
+    case 'MSG_DELIVER': {
+      useChatStore.getState().updateMessageStatus(data.payload.message.id, { isDelivered: true });
+      break;
+    }
+    case 'MSG_DELETE': {
+      useChatStore.getState().deleteMessage(data.payload.message.id);
+      break;
+    }
+    case 'MSG_READ': {
+      useChatStore.getState().updateMessageStatus(data.payload.message.id, { isReaded: true });
+      break;
+    }
+    case 'MSG_EDIT': {
+      useChatStore.getState().editMessage(data.payload.message.id, data.payload.message.text);
       break;
     }
   }
