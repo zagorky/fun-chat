@@ -1,6 +1,6 @@
 import { Message } from '../message/message.tsx';
-import { useChatStore } from '../../store/use-chat-store.ts';
-import { useAuthStore } from '../../store/use-auth-store.ts';
+import { useChatStore } from '../../stores/use-chat-store.ts';
+import { useAuthStore } from '../../stores/use-auth-store.ts';
 
 export function ChatDialog() {
   const selectedUser = useChatStore((state) => state.selectedUser);

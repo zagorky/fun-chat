@@ -1,8 +1,8 @@
 import { Input } from '../input/input.tsx';
 import React, { useState } from 'react';
 import { Button } from '../button/button.tsx';
-import { useChatStore } from '../../store/use-chat-store.ts';
-import { useAuthStore } from '../../store/use-auth-store.ts';
+import { useChatStore } from '../../stores/use-chat-store.ts';
+import { useAuthStore } from '../../stores/use-auth-store.ts';
 
 export function ChatForm() {
   const [message, setMessage] = useState('');

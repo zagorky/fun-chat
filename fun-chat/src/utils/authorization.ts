@@ -1,4 +1,4 @@
-import { useAuthStore } from '../store/use-auth-store.ts';
+import { useAuthStore } from '../stores/use-auth-store.ts';
 import { sendWebSocketMessage } from '../socket.ts';
 
 export function validateLogin(login: string) {

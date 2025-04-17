@@ -1,6 +1,6 @@
 import { Button } from '../button/button.tsx';
 import { Link } from '@tanstack/react-router';
-import { useAuthStore } from '../../store/use-auth-store.ts';
+import { useAuthStore } from '../../stores/use-auth-store.ts';
 import { handleLogout } from '../../utils/authorization.ts';
 
 export function Header() {

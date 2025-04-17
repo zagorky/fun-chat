@@ -6,6 +6,7 @@ import { router } from './router.tsx';
 function App() {
   useEffect(() => {
     connectSocket('ws://localhost:4000');
+    // connectSocket('wss://mik-aleinik.by/chat');
   }, []);
   return <RouterProvider router={router} />;
 }
