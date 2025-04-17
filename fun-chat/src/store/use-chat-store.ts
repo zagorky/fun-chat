@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, devtools, createJSONStorage } from 'zustand/middleware';
 import { sendWebSocketMessage } from '../socket.ts';
 import type { MessageType, ServerResponse, UserType } from '../types/types.ts';
+import { useAuthStore } from './use-auth-store.ts';
 
 type ChatStore = {
   users: UserType[];
@@ -12,12 +13,13 @@ type ChatStore = {
   searchQuery: string;
   getUsers: () => void;
   setSelectedUser: (user: UserType) => void;
+  sendMessage: (currentUser: string, message: string) => void;
 };
 
 export const useChatStore = create<ChatStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         users: [],
         activeUsers: [],
         error: null,
@@ -50,6 +52,39 @@ export const useChatStore = create<ChatStore>()(
                 login: user.login,
               },
             },
+          });
+        },
+        sendMessage: (currentUser, message) => {
+          const state = get();
+
+          if (!state.selectedUser) return;
+
+          const newMessage: MessageType = {
+            id: crypto.randomUUID(),
+            from: currentUser,
+            to: state.selectedUser.login,
+            text: message,
+            datetime: Date.now(),
+            status: {
+              isDelivered: false,
+              isReaded: false,
+              isEdited: false,
+            },
+          };
+
+          sendWebSocketMessage({
+            id: crypto.randomUUID(),
+            type: 'MSG_SEND',
+            payload: {
+              message: {
+                to: state.selectedUser.login,
+                text: message,
+              },
+            },
+          });
+
+          set({
+            messages: [...state.messages, newMessage].sort((a, b) => a.datetime - b.datetime),
           });
         },
       }),
@@ -120,6 +155,32 @@ export function handleServerMassageForChat(data: ServerResponse) {
     }
     case 'MSG_FROM_USER': {
       useChatStore.setState({ messages: data.payload.messages });
+      break;
+    }
+    case 'USER_LOGOUT': {
+      useChatStore.setState({ selectedUser: null });
+      break;
+    }
+    case 'MSG_SEND': {
+      const message = data.payload.message;
+      const isIncomingMessage = message.from !== useAuthStore.getState().login;
+
+      if (isIncomingMessage) {
+        useChatStore.setState((state) => ({
+          messages: [...state.messages, message].sort((a, b) => a.datetime - b.datetime),
+        }));
+      } else {
+        useChatStore.setState((state) => ({
+          messages: state.messages.map((message_) =>
+            message_.text === message.text && message_.status.isDelivered === false
+              ? message
+              : message_,
+          ),
+        }));
+      }
+      useChatStore.setState((state) => ({
+        messages: [...state.messages, message].sort((a, b) => a.datetime - b.datetime),
+      }));
       break;
     }
   }

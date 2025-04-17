@@ -29,9 +29,6 @@ export default function MainPage() {
   return (
     <Layout>
       <main className="flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[520px]:text-xl  transition-all duration-200 ease-in-out">
-          Chat Page
-        </h1>
         <div className="grid grid-cols-2 max-[750px]:grid-cols-1">
           <UserList />
           <Chat />

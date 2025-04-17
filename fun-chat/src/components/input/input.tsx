@@ -7,12 +7,13 @@ type InputProps = {
   value: string;
   placeholder?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 };
 
 export function Input(props: InputProps) {
   const style = [
-    'px-4',
-    'py-2',
+    'px-2',
+    'py-1',
     'm-1',
     'border',
     'border-gray-300',
@@ -37,6 +38,7 @@ export function Input(props: InputProps) {
         placeholder={props.placeholder}
         value={props.value}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
     </label>
   );
