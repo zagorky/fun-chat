@@ -16,8 +16,8 @@ export function Message(props: MessageType) {
     event.preventDefault();
     if (editedText !== props.text) {
       editMessage(props.id, editedText);
+      setIsEditing(false);
     }
-    setIsEditing(false);
   };
 
   return (
@@ -36,7 +36,9 @@ export function Message(props: MessageType) {
               <button
                 className={'cursor-pointer'}
                 type="button"
-                onClick={() => setIsEditing(!isEditing)}
+                onClick={() => {
+                  setIsEditing(!isEditing);
+                }}
               >
                 ✏️
               </button>

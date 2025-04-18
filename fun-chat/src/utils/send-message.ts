@@ -31,3 +31,34 @@ export function sendMessageToServer(from: string, to: string, message: string) {
     messages: [...state.messages, newMessage].sort((a, b) => a.datetime - b.datetime),
   }));
 }
+
+export function sendDeleteMessageToServer(messageId: string) {
+  sendWebSocketMessage({
+    id: crypto.randomUUID(),
+    type: 'MSG_DELETE',
+    payload: {
+      message: {
+        id: messageId,
+        // status: {
+        //   isDeleted: true,
+        // },
+      },
+    },
+  });
+}
+
+export function sendEditMessageToServer(messageId: string, newText: string) {
+  sendWebSocketMessage({
+    id: crypto.randomUUID(),
+    type: 'MSG_EDIT',
+    payload: {
+      message: {
+        id: messageId,
+        text: newText,
+        status: {
+          isEdited: true,
+        },
+      },
+    },
+  });
+}

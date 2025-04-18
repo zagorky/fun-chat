@@ -2,7 +2,11 @@ import { create } from 'zustand';
 import { persist, devtools, createJSONStorage } from 'zustand/middleware';
 import type { MessageType, ServerResponse, UserType } from '../types/types.ts';
 import { useAuthStore } from './use-auth-store.ts';
-import { sendMessageToServer } from '../utils/send-message.ts';
+import {
+  sendDeleteMessageToServer,
+  sendEditMessageToServer,
+  sendMessageToServer,
+} from '../utils/send-message.ts';
 import { getUsersUtility } from '../utils/get-users.ts';
 import { setSelectedUserUtility } from '../utils/set-selected-user.ts';
 
@@ -64,9 +68,16 @@ export const useChatStore = create<ChatStore>()(
         },
 
         deleteMessage: (messageId) => {
-          set((state) => ({
+          const state = get();
+
+          if (!state.messages.some((m) => m.id === messageId)) {
+            return;
+          }
+          set({
             messages: state.messages.filter((message) => message.id !== messageId),
-          }));
+          });
+
+          sendDeleteMessageToServer(messageId);
         },
         editMessage: (messageId, text) => {
           set((state) => ({
@@ -80,6 +91,7 @@ export const useChatStore = create<ChatStore>()(
                 : message,
             ),
           }));
+          sendEditMessageToServer(messageId, text);
         },
         updateMessageStatus: (messageId: string, status: Partial<MessageType['status']>) => {
           set((state) => ({
@@ -195,7 +207,9 @@ export function handleServerMassageForChat(data: ServerResponse) {
       break;
     }
     case 'MSG_DELETE': {
-      useChatStore.getState().deleteMessage(data.payload.message.id);
+      useChatStore.setState((state) => ({
+        messages: state.messages.filter((m) => m.id !== data.payload.message.id),
+      }));
       break;
     }
     case 'MSG_READ': {
@@ -203,7 +217,12 @@ export function handleServerMassageForChat(data: ServerResponse) {
       break;
     }
     case 'MSG_EDIT': {
-      useChatStore.getState().editMessage(data.payload.message.id, data.payload.message.text);
+      const { id, text } = data.payload.message;
+      useChatStore.setState((state) => ({
+        messages: state.messages.map((m) =>
+          m.id === id ? { ...m, text, status: { ...m.status, isEdited: true } } : m,
+        ),
+      }));
       break;
     }
   }
