@@ -25,11 +25,11 @@ export function Message(props: MessageType) {
       <div
         className={
           isCurrentUser
-            ? 'grid grid-rows-2 rounded ring-2 m-1 p-1 ring-cyan-700 w-4/5'
-            : 'grid grid-rows-2 rounded ring-2 m-1 p-1 ring-lime-700  w-4/5'
+            ? 'grid grid-rows-[auto_auto] rounded ring-2 m-1 p-1 ring-cyan-700 w-4/5 h-auto'
+            : 'grid grid-rows-[auto_auto]  rounded ring-2 m-1 p-1 ring-lime-700  w-4/5 h-auto'
         }
       >
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center  max-w-[200px] max-h-[20px]">
           <span className="text-sm font-semibold text-cyan-700">{props.from}</span>
           {isCurrentUser && (
             <span className="flex gap-1 text-xs">
@@ -54,7 +54,7 @@ export function Message(props: MessageType) {
         </div>
 
         {isEditing ? (
-          <form className="my-1" onSubmit={handleEdit}>
+          <form className="my-1 max-w-[200px]" onSubmit={handleEdit}>
             <input
               value={editedText}
               onChange={(event) => setEditedText(event.target.value)}
@@ -78,7 +78,7 @@ export function Message(props: MessageType) {
             </div>
           </form>
         ) : (
-          <p className="my-1">{props.text}</p>
+          <p className="max-w-[200px]">{props.text}</p>
         )}
 
         <div className="flex justify-between items-center text-xs text-gray-500">
