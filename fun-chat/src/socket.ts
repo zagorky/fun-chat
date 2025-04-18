@@ -1,7 +1,7 @@
 import { hasSome } from '@powwow-js/core';
 import type { ClientRequest, ServerResponse } from './types/types.ts';
 import { isMessage } from './types/helpers.ts';
-import { useAuthStore } from './store/use-auth-store.ts';
+import { useAuthStore } from './stores/use-auth-store.ts';
 
 let socket: WebSocket | null = null;
 const messageHandlers: ((data: ServerResponse) => void)[] = [];
@@ -9,7 +9,7 @@ const RECONNECT_INTERVAL = 3000;
 
 export function connectSocket(url: string) {
   socket = new WebSocket(url);
-
+  console.log('Connecting socket');
   socket.addEventListener('open', () => {
     const { isAuthenticated, login, password } = useAuthStore.getState();
     if (isAuthenticated && login && password) {

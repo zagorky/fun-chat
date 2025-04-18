@@ -39,9 +39,6 @@ export function sendDeleteMessageToServer(messageId: string) {
     payload: {
       message: {
         id: messageId,
-        // status: {
-        //   isDeleted: true,
-        // },
       },
     },
   });

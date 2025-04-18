@@ -171,6 +171,11 @@ export function handleServerMassageForChat(data: ServerResponse) {
         return {
           activeUsers: state.activeUsers.filter((u) => u.login !== updatedUser.login),
           users: state.users.map((u) => (u.login === updatedUser.login ? updatedUser : u)),
+          messages: state.messages.map((message) =>
+            message.to === data.payload.user.login && !message.status.isDelivered
+              ? { ...message, status: { ...message.status, isDelivered: true } }
+              : message,
+          ),
         };
       });
       break;

@@ -1,5 +1,6 @@
 import { useAuthStore } from '../stores/use-auth-store.ts';
 import { sendWebSocketMessage } from '../socket.ts';
+import { useChatStore } from '../stores/use-chat-store.ts';
 
 export function validateLogin(login: string) {
   const MIN_LENGTH = 4;
@@ -64,6 +65,7 @@ export const sendLogoutMessage = (login: string, password: string) => {
 
 export const handleLogout = () => {
   const { login, password, isAuthenticated, logout } = useAuthStore.getState();
+  useChatStore.setState({ selectedUser: null });
   logout();
 
   if (isAuthenticated && login && password) {

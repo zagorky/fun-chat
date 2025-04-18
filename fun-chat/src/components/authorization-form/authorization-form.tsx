@@ -1,7 +1,7 @@
 import { Input } from '../input/input.tsx';
 import { Button } from '../button/button.tsx';
 import { useAuthStore } from '../../stores/use-auth-store.ts';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { handleLoginSubmit } from '../../utils/authorization.ts';
 
 export const AuthorizationForm = () => {
