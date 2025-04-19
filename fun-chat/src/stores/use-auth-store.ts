@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { validateLogin, validatePassword } from '../utils/authorization.ts';
 import type { ServerResponse } from '../types/types.ts';
 import { persist, devtools, createJSONStorage } from 'zustand/middleware';
+import { getUsersUtility } from '../utils/get-users.ts';
 
 type AuthStore = {
   login: string;
@@ -107,6 +108,7 @@ export const handleServerMessageForAuth = (data: ServerResponse) => {
   if (data.type === 'USER_LOGIN') {
     if (data.payload.user.isLogined) {
       useAuthStore.getState().loginSuccess();
+      getUsersUtility();
     } else {
       useAuthStore.getState().loginFailure('Login failed: unknown reason');
     }
