@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, devtools, createJSONStorage } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 import type { MessageType, ServerResponse, UserType } from '../types/types.ts';
 import { useAuthStore } from './use-auth-store.ts';
 import {
@@ -31,91 +31,83 @@ type ChatStore = {
 };
 
 export const useChatStore = create<ChatStore>()(
-  devtools(
-    persist(
-      (set, get) => ({
-        users: [],
-        activeUsers: [],
-        error: null,
-        searchQuery: '',
-        selectedUser: null,
-        messages: [],
-        unreadMessages: {},
-        incrementUnread: (userLogin) => {
-          set((state) => ({
-            unreadMessages: {
-              ...state.unreadMessages,
-              [userLogin]: (state.unreadMessages[userLogin] || 0) + 1,
-            },
-          }));
+  devtools((set, get) => ({
+    users: [],
+    activeUsers: [],
+    error: null,
+    searchQuery: '',
+    selectedUser: null,
+    messages: [],
+    unreadMessages: {},
+    incrementUnread: (userLogin) => {
+      set((state) => ({
+        unreadMessages: {
+          ...state.unreadMessages,
+          [userLogin]: (state.unreadMessages[userLogin] || 0) + 1,
         },
-        resetUnread: (userLogin) => {
-          set((state) => ({
-            unreadMessages: {
-              ...state.unreadMessages,
-              [userLogin]: 0,
-            },
-          }));
+      }));
+    },
+    resetUnread: (userLogin) => {
+      set((state) => ({
+        unreadMessages: {
+          ...state.unreadMessages,
+          [userLogin]: 0,
         },
-        markAsRead: (userLogin) => {
-          set((state) => ({
-            messages: state.messages.map((message) =>
-              message.from === userLogin && !message.status.isReaded
-                ? { ...message, status: { ...message.status, isReaded: true } }
-                : message,
-            ),
-          }));
-        },
+      }));
+    },
+    markAsRead: (userLogin) => {
+      set((state) => ({
+        messages: state.messages.map((message) =>
+          message.from === userLogin && !message.status.isReaded
+            ? { ...message, status: { ...message.status, isReaded: true } }
+            : message,
+        ),
+      }));
+    },
 
-        deleteMessage: (messageId) => {
-          const state = get();
+    deleteMessage: (messageId) => {
+      const state = get();
 
-          if (!state.messages.some((m) => m.id === messageId)) {
-            return;
-          }
-          set({
-            messages: state.messages.filter((message) => message.id !== messageId),
-          });
+      if (!state.messages.some((m) => m.id === messageId)) {
+        return;
+      }
+      set({
+        messages: state.messages.filter((message) => message.id !== messageId),
+      });
 
-          sendDeleteMessageToServer(messageId);
-        },
-        editMessage: (messageId, text) => {
-          set((state) => ({
-            messages: state.messages.map((message) =>
-              message.id === messageId
-                ? {
-                    ...message,
-                    text,
-                    status: { ...message.status, isEdited: true },
-                  }
-                : message,
-            ),
-          }));
-          sendEditMessageToServer(messageId, text);
-        },
-        updateMessageStatus: (messageId: string, status: Partial<MessageType['status']>) => {
-          set((state) => ({
-            messages: state.messages.map((message) =>
-              message.id === messageId
-                ? { ...message, status: { ...message.status, ...status } }
-                : message,
-            ),
-          }));
-        },
-        getUsers: () => getUsersUtility(),
-        setSelectedUser: (user) => setSelectedUserUtility(user),
-        sendMessage: (currentUser, message) => {
-          const state = get();
-          if (!state.selectedUser) return;
-          sendMessageToServer(currentUser, state.selectedUser.login, message);
-        },
-      }),
-      {
-        name: 'ChatStore',
-        storage: createJSONStorage(() => sessionStorage),
-      },
-    ),
-  ),
+      sendDeleteMessageToServer(messageId);
+    },
+    editMessage: (messageId, text) => {
+      set((state) => ({
+        messages: state.messages.map((message) =>
+          message.id === messageId
+            ? {
+                ...message,
+                text,
+                status: { ...message.status, isEdited: true },
+              }
+            : message,
+        ),
+      }));
+      sendEditMessageToServer(messageId, text);
+    },
+    updateMessageStatus: (messageId: string, status: Partial<MessageType['status']>) => {
+      set((state) => ({
+        messages: state.messages.map((message) =>
+          message.id === messageId
+            ? { ...message, status: { ...message.status, ...status } }
+            : message,
+        ),
+      }));
+    },
+    getUsers: () => getUsersUtility(),
+    setSelectedUser: (user) => setSelectedUserUtility(user),
+    sendMessage: (currentUser, message) => {
+      const state = get();
+      if (!state.selectedUser) return;
+      sendMessageToServer(currentUser, state.selectedUser.login, message);
+    },
+  })),
 );
 
 export function handleServerMassageForChat(data: ServerResponse) {
@@ -184,10 +176,6 @@ export function handleServerMassageForChat(data: ServerResponse) {
       useChatStore.setState({ messages: data.payload.messages });
       break;
     }
-    case 'USER_LOGOUT': {
-      useChatStore.setState({ selectedUser: null });
-      break;
-    }
     case 'MSG_SEND': {
       const message = data.payload.message;
       const isIncomingMessage = message.from !== useAuthStore.getState().login;
@@ -199,9 +187,7 @@ export function handleServerMassageForChat(data: ServerResponse) {
       } else {
         useChatStore.setState((state) => ({
           messages: state.messages.map((message_) =>
-            message_.text === message.text && message_.status.isDelivered === false
-              ? message
-              : message_,
+            message_.text === message.text && !message_.status.isDelivered ? message : message_,
           ),
         }));
       }
