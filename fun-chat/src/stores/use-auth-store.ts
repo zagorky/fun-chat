@@ -19,9 +19,10 @@ type AuthStore = {
   loginFailure: (error: string) => void;
   clearAuthError: () => void;
   logout: () => void;
-
   isReconnecting: boolean;
   setReconnecting: (value: boolean) => void;
+  isConnecting: boolean;
+  setConnecting: (value: boolean) => void;
 };
 
 export const useAuthStore = create<AuthStore>()(
@@ -37,8 +38,10 @@ export const useAuthStore = create<AuthStore>()(
         authError: '',
         isAuthenticated: false,
         isReconnecting: false,
+        isConnecting: false,
 
         setReconnecting: (value) => set({ isReconnecting: value }, false, 'setReconnecting'),
+        setConnecting: (value) => set({ isConnecting: value }, false, 'setConnecting'),
 
         setLogin: (login) =>
           set(
