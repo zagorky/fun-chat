@@ -10,6 +10,7 @@ export function UserList() {
   const getUsers = useChatStore((state) => state.getUsers);
   const currentUser = useAuthStore((state) => state.login);
   const [searchParameter, setSearchParameter] = useState('');
+  const activeUsers = useChatStore((state) => state.activeUsers);
 
   useEffect(() => {
     getUsers();
@@ -29,8 +30,8 @@ export function UserList() {
     return <div>Error: {error}</div>;
   }
   return (
-    <section className="border border-b-pink-900 opacity-80 rounded-lg shadow-sm p-4 m-1 flex flex-col max-h-[70vh] min-h-[70vh] max-[750px]:max-h-[30vh] max-[750px]:min-h-[30vh] ">
-      <h3 className="border-b-2 text-teal-900 font-bold">Online users:</h3>
+    <section className=" relative overflow-hidden border border-b-pink-900 opacity-80 rounded-lg shadow-sm p-4 m-1 flex flex-col h-[70vh] min-h-[70vh] max-[750px]:max-h-[30vh] max-[750px]:min-h-[30vh]">
+      <h3 className="border-b-2 text-teal-900 font-bold">Online users: {activeUsers.length}</h3>
       <Input
         id="search"
         label=""
@@ -39,7 +40,7 @@ export function UserList() {
         type="text"
         placeholder="Search..."
       />
-      <ul className="mt-2 pr-2 space-y-1 overflow-y-auto max-h-[calc(70vh-100px)] flex-grow">
+      <ul className=" relative mt-2 pr-2 space-y-1 overflow-y-auto flex-1">
         {filteredUsers.map((user) => (
           <UserListItem key={user.login} login={user.login} isLogined={user.isLogined} />
         ))}

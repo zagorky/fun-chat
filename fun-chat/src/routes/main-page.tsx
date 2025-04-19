@@ -37,7 +37,7 @@ export default function MainPage() {
   return (
     <Layout>
       <main className="flex flex-col items-center justify-center">
-        <div className="grid grid-cols-2 max-[750px]:grid-cols-1">
+        <div className=" max-w-[700px] grid grid-cols-2 max-[750px]:grid-cols-1 max-[750px]:max-w-[320px]">
           <UserList />
           <Chat />
         </div>

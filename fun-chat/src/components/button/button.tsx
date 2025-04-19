@@ -26,8 +26,8 @@ export function Button(props: ButtonProps) {
     'disabled:bg-rose-300',
     'disabled:opacity-60',
     'disabled:pointer-events-none',
-    `max-[520px]:min-w-15`,
-    `max-[520px]:text-xs`,
+    `max-[750px]:min-w-15`,
+    `max-[750px]:text-xs`,
   ];
 
   return (
