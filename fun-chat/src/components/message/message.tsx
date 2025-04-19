@@ -30,7 +30,7 @@ export function Message(props: MessageType) {
         }
       >
         <div className="flex justify-between items-center  max-w-[200px] max-h-[20px]">
-          <span className="text-sm font-semibold text-cyan-700">{props.from}</span>
+          <p className=" truncate text-sm font-semibold text-cyan-700">{props.from}</p>
           {isCurrentUser && (
             <span className="flex gap-1 text-xs">
               <button
