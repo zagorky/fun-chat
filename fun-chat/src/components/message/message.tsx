@@ -6,7 +6,8 @@ import React, { useState } from 'react';
 export function Message(props: MessageType) {
   const currentUser = useAuthStore((state) => state.login);
   const isCurrentUser = props.from === currentUser;
-  const { editMessage, deleteMessage } = useChatStore();
+  const editMessage = useChatStore((state) => state.editMessage);
+  const deleteMessage = useChatStore((state) => state.deleteMessage);
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(props.text);
 

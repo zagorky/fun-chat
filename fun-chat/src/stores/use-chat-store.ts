@@ -6,25 +6,23 @@ import {
   sendDeleteMessageToServer,
   sendEditMessageToServer,
   sendMessageToServer,
+  sendReadMessageToServer,
 } from '../utils/send-message.ts';
-import { getUsersUtility } from '../utils/get-users.ts';
-import { setSelectedUserUtility } from '../utils/set-selected-user.ts';
+import { getUsersHistory, getUsersUtility } from '../utils/get-users.ts';
 
 type ChatStore = {
   users: UserType[];
   activeUsers: UserType[];
   selectedUser: UserType | null;
   messages: MessageType[];
-  unreadMessages: Record<string, number>;
   error: string | null;
   searchQuery: string;
   getUsers: () => void;
-
   setSelectedUser: (user: UserType) => void;
   sendMessage: (currentUser: string, message: string) => void;
   incrementUnread: (userLogin: string) => void;
   resetUnread: (userLogin: string) => void;
-  markAsRead: (userLogin: string) => void;
+  markAsRead: (userLogin: string, messageId: string) => void;
   deleteMessage: (messageId: string) => void;
   editMessage: (messageId: string, text: string) => void;
   updateMessageStatus: (messageId: string, status: Partial<MessageType['status']>) => void;
@@ -39,30 +37,16 @@ export const useChatStore = create<ChatStore>()(
     selectedUser: null,
     messages: [],
     unreadMessages: {},
-    incrementUnread: (userLogin) => {
-      set((state) => ({
-        unreadMessages: {
-          ...state.unreadMessages,
-          [userLogin]: (state.unreadMessages[userLogin] || 0) + 1,
-        },
-      }));
-    },
-    resetUnread: (userLogin) => {
-      set((state) => ({
-        unreadMessages: {
-          ...state.unreadMessages,
-          [userLogin]: 0,
-        },
-      }));
-    },
-    markAsRead: (userLogin) => {
+
+    markAsRead: (messageId, userLogin) => {
       set((state) => ({
         messages: state.messages.map((message) =>
-          message.from === userLogin && !message.status.isReaded
+          message.to === userLogin && !message.status.isReaded
             ? { ...message, status: { ...message.status, isReaded: true } }
             : message,
         ),
       }));
+      sendReadMessageToServer(messageId);
     },
 
     deleteMessage: (messageId) => {
@@ -101,7 +85,7 @@ export const useChatStore = create<ChatStore>()(
       }));
     },
     getUsers: () => getUsersUtility(),
-    setSelectedUser: (user) => setSelectedUserUtility(user),
+    setSelectedUser: (user) => set({ selectedUser: user }),
     sendMessage: (currentUser, message) => {
       const state = get();
       if (!state.selectedUser) return;
@@ -134,6 +118,7 @@ export function handleServerMassageForChat(data: ServerResponse) {
           ...inactiveUsers.filter((u) => !state.activeUsers.some((au) => au.login === u.login)),
         ];
 
+        getUsersHistory(users);
         return { users };
       });
       break;

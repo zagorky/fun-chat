@@ -1,14 +1,23 @@
 import { useChatStore } from '../../stores/use-chat-store.ts';
 import type { UserType } from '../../types/types.ts';
+import { useEffect, useState } from 'react';
+import { useAuthStore } from '../../stores/use-auth-store.ts';
 
 export function UserListItem(user: UserType) {
   const setSelectedUser = useChatStore((state) => state.setSelectedUser);
   const selectedUser = useChatStore((state) => state.selectedUser);
+  const messages = useChatStore((state) => state.messages);
+  const currentUserLogin = useAuthStore((state) => state.login);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const unreadMessages = useChatStore((state) => state.messages).filter(
-    (message) => message.from === user.login,
-  );
+  useEffect(() => {
+    const count = messages.filter(
+      (message) =>
+        message.from === user.login && message.to === currentUserLogin && !message.status.isReaded,
+    ).length;
 
+    setUnreadCount(count);
+  }, [messages, user.login, currentUserLogin]);
   return (
     <li className="w-full" key={user.login}>
       <label className="flex justify-between p-1 items-center space-x-3 cursor-pointer has-checked:bg-gray-300 has-checked:ring-gray-300 rounded has-checked:text-teal-900">
@@ -24,9 +33,12 @@ export function UserListItem(user: UserType) {
           <span>{user.isLogined ? '😉' : '🫥'}</span>
           <p className="truncate">{user.login}</p>{' '}
         </span>
-        <span className="border-b-2 border-b-pink-900 flex justify-end px-2 mx-2 ">
-          {unreadMessages.length}
-        </span>
+
+        {unreadCount > 0 && (
+          <span className="border-b-2 border-b-pink-900 flex justify-end px-2 mx-2">
+            {unreadCount}
+          </span>
+        )}
       </label>
     </li>
   );

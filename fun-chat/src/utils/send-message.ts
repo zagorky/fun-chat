@@ -59,3 +59,18 @@ export function sendEditMessageToServer(messageId: string, newText: string) {
     },
   });
 }
+
+export function sendReadMessageToServer(messageId: string) {
+  sendWebSocketMessage({
+    id: crypto.randomUUID(),
+    type: 'MSG_READ',
+    payload: {
+      message: {
+        id: messageId,
+        status: {
+          isReaded: true,
+        },
+      },
+    },
+  });
+}
