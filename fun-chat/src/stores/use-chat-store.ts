@@ -8,7 +8,7 @@ import {
   sendMessageToServer,
   sendReadMessageToServer,
 } from '../utils/send-message.ts';
-import { getUsersHistory, getUsersUtility } from '../utils/get-users.ts';
+import { getUserHistory, getUsersHistory, getUsersUtility } from '../utils/get-users.ts';
 
 type ChatStore = {
   users: UserType[];
@@ -85,7 +85,10 @@ export const useChatStore = create<ChatStore>()(
       }));
     },
     getUsers: () => getUsersUtility(),
-    setSelectedUser: (user) => set({ selectedUser: user }),
+    setSelectedUser: (user) => {
+      getUserHistory(user);
+      set({ selectedUser: user });
+    },
     sendMessage: (currentUser, message) => {
       const state = get();
       if (!state.selectedUser) return;

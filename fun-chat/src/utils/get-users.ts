@@ -20,17 +20,19 @@ export function getUsersUtility() {
 }
 
 export function getUsersHistory(users: UserType[]) {
-  users.forEach((user) => {
-    if (user.login !== useAuthStore.getState().login) {
-      sendWebSocketMessage({
-        id: crypto.randomUUID(),
-        type: 'MSG_FROM_USER',
-        payload: {
-          user: {
-            login: user.login,
-          },
+  users.forEach((user) => getUserHistory(user));
+}
+
+export function getUserHistory(user: UserType) {
+  if (user.login !== useAuthStore.getState().login) {
+    sendWebSocketMessage({
+      id: crypto.randomUUID(),
+      type: 'MSG_FROM_USER',
+      payload: {
+        user: {
+          login: user.login,
         },
-      });
-    }
-  });
+      },
+    });
+  }
 }
