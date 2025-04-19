@@ -8,10 +8,16 @@ const messageHandlers: ((data: ServerResponse) => void)[] = [];
 const RECONNECT_INTERVAL = 3000;
 
 export function connectSocket(url: string) {
+  const { isAuthenticated, login, password, setReconnecting } = useAuthStore.getState();
+
   socket = new WebSocket(url);
-  console.log('Connecting socket');
+  console.log('Connecting WebSocket');
+
   socket.addEventListener('open', () => {
-    const { isAuthenticated, login, password } = useAuthStore.getState();
+    console.log('WebSocket connected');
+
+    setReconnecting(false);
+
     if (isAuthenticated && login && password) {
       sendWebSocketMessage({
         id: crypto.randomUUID(),
@@ -28,8 +34,9 @@ export function connectSocket(url: string) {
         return;
       }
       const data: unknown = JSON.parse(event.data);
-      console.log('Received message', data);
+
       if (isMessage<ServerResponse>(data)) {
+        console.log('Received message', data.type, data.payload);
         messageHandlers.forEach((handler) => handler(data));
       }
     } catch (error) {
@@ -39,7 +46,15 @@ export function connectSocket(url: string) {
 
   socket.addEventListener('close', (event) => {
     console.log(`WebSocket closed: ${event.reason}`);
+
+    setReconnecting(true);
+
     setTimeout(() => connectSocket(url), RECONNECT_INTERVAL);
+  });
+
+  socket.addEventListener('error', (event) => {
+    console.warn('WebSocket error', event);
+    socket?.close();
   });
 }
 
