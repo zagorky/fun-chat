@@ -18,7 +18,7 @@ export function connectSocket(url: string) {
 
     setReconnecting(false);
 
-    if (isAuthenticated && login && password) {
+    if (!isAuthenticated && login && password) {
       sendWebSocketMessage({
         id: crypto.randomUUID(),
         type: 'USER_LOGIN',
