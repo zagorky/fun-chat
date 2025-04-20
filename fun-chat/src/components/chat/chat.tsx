@@ -1,4 +1,3 @@
-import { ChatForm } from '../chat-form/chat-form.tsx';
 import { useChatStore } from '../../stores/use-chat-store.ts';
 import { ChatDialog } from '../chat-dialog/chat-dialog.tsx';
 
@@ -20,7 +19,6 @@ export function Chat() {
         )}
       </h3>
       <ChatDialog />
-      <ChatForm />
     </section>
   );
 }

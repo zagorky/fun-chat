@@ -4,7 +4,11 @@ import { Button } from '../button/button.tsx';
 import { useChatStore } from '../../stores/use-chat-store.ts';
 import { useAuthStore } from '../../stores/use-auth-store.ts';
 
-export function ChatForm() {
+type ChatFormProps = {
+  onClick: () => void;
+};
+
+export function ChatForm({ onClick }: ChatFormProps) {
   const [message, setMessage] = useState('');
   const { selectedUser, sendMessage } = useChatStore();
   const currentUser = useAuthStore((state) => state.login);
@@ -26,6 +30,7 @@ export function ChatForm() {
         value={message}
         disabled={!selectedUser}
         onChange={(event) => setMessage(event.target.value)}
+        onClick={() => onClick()}
       />
       <Button type={'submit'} disabled={!selectedUser || message.length === 0}>
         Send

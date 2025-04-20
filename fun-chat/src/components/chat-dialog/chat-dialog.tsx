@@ -4,6 +4,7 @@ import { useAuthStore } from '../../stores/use-auth-store.ts';
 import React, { useEffect, useRef, useState } from 'react';
 import type { MessageType } from '../../types/types.ts';
 import { Divider } from '../divider/divider.tsx';
+import { ChatForm } from '../chat-form/chat-form.tsx';
 
 export function ChatDialog() {
   const selectedUser = useChatStore((state) => state.selectedUser?.login);
@@ -11,8 +12,9 @@ export function ChatDialog() {
   const currentUser = useAuthStore((state) => state.login);
   const messagesEndReference = useRef<HTMLLIElement>(null);
   const dividerReference = useRef<HTMLDivElement>(null);
-
   const [showDivider, setShowDivider] = useState(true);
+  const [lastSelectedUser, setLastSelectedUser] = useState<string | null>(null);
+  const [hasViewedUnreadMessages, setHasViewedUnreadMessages] = useState(false);
 
   const filteredMessages = messages.filter(
     (message) =>
@@ -34,24 +36,37 @@ export function ChatDialog() {
   };
 
   const handleUserInteraction = () => {
-    if (showDivider) setShowDivider(false);
+    if (showDivider) {
+      setShowDivider(false);
+      setHasViewedUnreadMessages(true);
+    }
   };
 
   useEffect(() => {
-    if (selectedUser && firstUnreadMessage) {
+    if (selectedUser && selectedUser !== lastSelectedUser) {
+      setShowDivider(true);
+      setLastSelectedUser(selectedUser);
+      setHasViewedUnreadMessages(false);
+    }
+  }, [selectedUser, lastSelectedUser]);
+
+  useEffect(() => {
+    if (hasViewedUnreadMessages) {
+      setShowDivider(false);
+    } else {
       setShowDivider(true);
     }
-  }, [selectedUser, firstUnreadMessage]);
+  }, [hasViewedUnreadMessages]);
 
   useEffect(() => {
     if (filteredMessages.length === 0) return;
 
-    if (showDivider && dividerReference.current) {
-      dividerReference.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else if (messagesEndReference.current) {
-      messagesEndReference.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if (showDivider) {
+      dividerReference.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      messagesEndReference.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
-  }, [filteredMessages, showDivider, dividerReference.current, messagesEndReference.current]);
+  }, [filteredMessages, showDivider]);
 
   const renderMessages = () => {
     if (!selectedUser) {
@@ -74,15 +89,18 @@ export function ChatDialog() {
   };
 
   return (
-    <ul
-      className="mt-2 pr-2 space-y-1 overflow-y-auto max-h-[calc(70vh-100px)] flex-grow"
-      onClick={() => {
-        handleReadMessages(filteredMessages);
-        handleUserInteraction();
-      }}
-    >
-      {renderMessages()}
-      <li ref={messagesEndReference}></li>
-    </ul>
+    <>
+      {' '}
+      <ul className="mt-2 pr-2 space-y-1 overflow-y-auto max-h-[calc(70vh-100px)] flex-grow">
+        {renderMessages()}
+        <li ref={messagesEndReference}></li>
+      </ul>
+      <ChatForm
+        onClick={() => {
+          handleReadMessages(filteredMessages);
+          handleUserInteraction();
+        }}
+      />
+    </>
   );
 }

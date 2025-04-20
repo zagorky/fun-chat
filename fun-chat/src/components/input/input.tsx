@@ -8,6 +8,7 @@ type InputProps = {
   placeholder?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
+  onClick?: () => void;
 };
 
 export function Input(props: InputProps) {
@@ -39,6 +40,7 @@ export function Input(props: InputProps) {
         value={props.value}
         onChange={props.onChange}
         disabled={props.disabled}
+        onClick={props.onClick}
       />
     </label>
   );
