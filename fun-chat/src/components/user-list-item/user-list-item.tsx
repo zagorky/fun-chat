@@ -20,14 +20,14 @@ export function UserListItem(user: UserType) {
   }, [messages, user.login, currentUserLogin]);
   return (
     <li className="w-full" key={user.login}>
-      <label className="flex justify-between p-1 items-center space-x-3 cursor-pointer has-checked:bg-gray-300 has-checked:ring-gray-300 rounded has-checked:text-teal-900">
+      <label className=" hover:bg-pink-100 flex justify-between p-1 items-center space-x-3 cursor-pointer has-checked:bg-emerald-200 has-checked:ring-gray-300 rounded has-checked:text-teal-900">
         <input
           type="radio"
           name="selectedUser"
           value={user.login}
           checked={selectedUser?.login === user.login}
           onChange={() => setSelectedUser(user)}
-          className="sr-only checked:bg-blue-500"
+          className="sr-only checked:bg-blue-500 "
         />
         <span className="inline-flex">
           <span>{user.isLogined ? '😉' : '🫥'}</span>

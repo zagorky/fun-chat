@@ -10,26 +10,36 @@ export function Header() {
   return (
     <header className={'flex flex-col w-full justify-around text-center'}>
       <div className={'flex flex-row items-center w-full justify-around text-center'}>
-        <Button type={'button'}>
-          <Link to="/about">About Page</Link>
-        </Button>
-        <Button type={'button'} disabled={isAuthenticated}>
-          <Link to="/login">Login page</Link>
-        </Button>
+        <Link to={'/about'}>
+          <Button type={'button'}>About Page</Button>{' '}
+        </Link>
+        <Link
+          className={isAuthenticated ? 'pointer-events-none' : ''}
+          to={isAuthenticated ? '/main' : '/login'}
+        >
+          <Button type={'button'} disabled={isAuthenticated}>
+            Login page
+          </Button>
+        </Link>
         <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[540px]:text-xl  transition-all duration-200 ease-in-out">
           Fun Chat
         </h1>
-        <Button type={'button'} disabled={!isAuthenticated}>
-          <Link to="/main">Chat Page</Link>
-        </Button>
+        <Link
+          to={isAuthenticated ? '/main' : '/'}
+          className={isAuthenticated ? '' : 'pointer-events-none'}
+        >
+          <Button type={'button'} disabled={!isAuthenticated}>
+            Chat Page
+          </Button>
+        </Link>
         <Button onClick={handleLogout} disabled={!isAuthenticated}>
           Exit
         </Button>{' '}
       </div>
       {userName && isAuthenticated ? (
-        <div className="flex flex-row items-center justify-around text-teal-900 font-bold">
+        <h2 className="flex flex-row items-center justify-around text-teal-900 font-bold">
           Your username: {userName}
-        </div>
+        </h2>
       ) : (
         <div>{''}</div>
       )}

@@ -8,7 +8,7 @@ export function ChatDialog() {
   const selectedUser = useChatStore((state) => state.selectedUser?.login);
   const messages = useChatStore((state) => state.messages);
   const currentUser = useAuthStore((state) => state.login);
-  const messagesEndReference = useRef<HTMLDivElement>(null);
+  const messagesEndReference = useRef<HTMLLIElement>(null);
 
   const filteredMessages = messages.filter(
     (message) =>
@@ -31,11 +31,11 @@ export function ChatDialog() {
 
   const renderMessages = () => {
     if (!selectedUser) {
-      return <p>Select a user to start chatting</p>;
+      return <li>Select a user to start chatting</li>;
     }
 
     if (filteredMessages.length === 0) {
-      return <div>No message history</div>;
+      return <li>No message history</li>;
     }
 
     return filteredMessages.map((message) => (
@@ -57,7 +57,7 @@ export function ChatDialog() {
       onClick={() => handleReadMessages(filteredMessages)}
     >
       {renderMessages()}
-      <div ref={messagesEndReference}></div>
+      <li ref={messagesEndReference}></li>
     </ul>
   );
 }
