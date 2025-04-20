@@ -22,7 +22,7 @@ export function Header() {
           </Button>
         </Link>
         <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[540px]:text-xl  transition-all duration-200 ease-in-out">
-          Fun Chat
+          Naive Chat
         </h1>
         <Link
           to={isAuthenticated ? '/main' : '/'}
