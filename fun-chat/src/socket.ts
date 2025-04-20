@@ -10,6 +10,7 @@ const RECONNECT_INTERVAL = 3000;
 export function connectSocket(url: string) {
   const { setConnecting, login, password, setReconnecting } = useAuthStore.getState();
 
+  if (socket && socket.readyState === WebSocket.OPEN) return;
   setConnecting(true);
 
   if (socket) {
@@ -43,7 +44,7 @@ export function connectSocket(url: string) {
       const data: unknown = JSON.parse(event.data);
 
       if (isMessage<ServerResponse>(data)) {
-        console.log('Received message', data.type, data.payload);
+        // console.log('Received message', data.type, data.payload);
         messageHandlers.forEach((handler) => handler(data));
       }
     } catch (error) {
@@ -80,4 +81,9 @@ export function subscribeToMessages(handler: (data: ServerResponse) => void) {
       messageHandlers.splice(index, 1);
     }
   };
+}
+
+export function disconnectSocket() {
+  socket?.close();
+  socket = null;
 }
