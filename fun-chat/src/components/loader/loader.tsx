@@ -9,9 +9,7 @@ export function Loader() {
       <div className="bg-white p-4 rounded-lg shadow-lg">
         <div className="flex items-center gap-3">
           <div className="animate-spin rounded-full h-7 w-7 border-3 border-pink-600  border-r-emerald-600"></div>
-          <span>
-            {isReconnecting && 'Reconnecting...'} {isConnecting && 'Connecting to server...'}
-          </span>
+          <span>{isConnecting && 'Connecting to server...'}</span>
         </div>
       </div>
     </div>

@@ -11,7 +11,6 @@ export default function AuthorizationPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      console.log('Redirect to main page');
       navigate({ to: '/main' }).catch((error) => console.log(error));
     }
   }, [isAuthenticated, navigate]);

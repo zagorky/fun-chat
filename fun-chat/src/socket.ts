@@ -44,7 +44,6 @@ export function connectSocket(url: string) {
       const data: unknown = JSON.parse(event.data);
 
       if (isMessage<ServerResponse>(data)) {
-        // console.log('Received message', data.type, data.payload);
         messageHandlers.forEach((handler) => handler(data));
       }
     } catch (error) {
