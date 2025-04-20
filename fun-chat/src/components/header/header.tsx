@@ -21,7 +21,7 @@ export function Header() {
             Login page
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[540px]:text-xl  transition-all duration-200 ease-in-out">
+        <h1 className="text-2xl font-bold text-pink-600 p-3 text-center max-[750px]:text-[14px]  transition-all duration-200 ease-in-out">
           Naive Chat
         </h1>
         <Link

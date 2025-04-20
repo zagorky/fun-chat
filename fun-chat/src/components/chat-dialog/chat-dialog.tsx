@@ -10,6 +10,8 @@ export function ChatDialog() {
   const messages = useChatStore((state) => state.messages);
   const currentUser = useAuthStore((state) => state.login);
   const messagesEndReference = useRef<HTMLLIElement>(null);
+  const dividerReference = useRef<HTMLDivElement>(null);
+
   const [showDivider, setShowDivider] = useState(true);
 
   const filteredMessages = messages.filter(
@@ -42,8 +44,14 @@ export function ChatDialog() {
   }, [selectedUser, firstUnreadMessage]);
 
   useEffect(() => {
-    messagesEndReference.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [filteredMessages]);
+    if (filteredMessages.length === 0) return;
+
+    if (showDivider && dividerReference.current) {
+      dividerReference.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (messagesEndReference.current) {
+      messagesEndReference.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [filteredMessages, showDivider, dividerReference.current, messagesEndReference.current]);
 
   const renderMessages = () => {
     if (!selectedUser) {
@@ -58,7 +66,7 @@ export function ChatDialog() {
       const isFirstUnread = firstUnreadMessage?.id === message.id;
       return (
         <React.Fragment key={message.id}>
-          {isFirstUnread && showDivider && <Divider />}
+          {isFirstUnread && showDivider && <Divider ref={dividerReference} />}
           <Message {...message} />
         </React.Fragment>
       );

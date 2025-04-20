@@ -1,6 +1,8 @@
-export function Divider() {
+import React from 'react';
+
+export const Divider = React.forwardRef<HTMLDivElement>((_, ref) => {
   return (
-    <div className="relative py-2">
+    <div ref={ref} className="relative py-2">
       <div className="absolute inset-0 flex items-center">
         <div className="w-full border-t-2 border-pink-700"></div>
       </div>
@@ -9,4 +11,4 @@ export function Divider() {
       </div>
     </div>
   );
-}
+});
