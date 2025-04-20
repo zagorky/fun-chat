@@ -20,7 +20,7 @@ export function UserListItem(user: UserType) {
   }, [messages, user.login, currentUserLogin]);
   return (
     <li className="w-full" key={user.login}>
-      <label className=" hover:bg-pink-100 flex justify-between p-1 items-center space-x-3 cursor-pointer has-checked:bg-emerald-200 has-checked:ring-gray-300 rounded has-checked:text-teal-900">
+      <label className=" hover:bg-pink-100 flex justify-between p-1 items-center space-x-3 cursor-pointer has-checked:bg-emerald-100 has-checked:ring-gray-300 rounded has-checked:text-teal-900">
         <input
           type="radio"
           name="selectedUser"

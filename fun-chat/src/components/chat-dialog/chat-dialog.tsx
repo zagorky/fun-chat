@@ -20,7 +20,7 @@ export function ChatDialog() {
     if (!selectedUser) return;
     messages.forEach((message) => {
       if (message.to === currentUser && !message.status.isReaded) {
-        useChatStore.getState().markAsRead(message.id, currentUser);
+        useChatStore.getState().markAsRead(message.id, currentUser, selectedUser);
       }
     });
   };

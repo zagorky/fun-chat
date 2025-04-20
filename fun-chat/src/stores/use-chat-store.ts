@@ -22,7 +22,7 @@ type ChatStore = {
   sendMessage: (currentUser: string, message: string) => void;
   incrementUnread: (userLogin: string) => void;
   resetUnread: (userLogin: string) => void;
-  markAsRead: (userLogin: string, messageId: string) => void;
+  markAsRead: (messageId: string, userLogin: string, selectedUser: string) => void;
   deleteMessage: (messageId: string) => void;
   editMessage: (messageId: string, text: string) => void;
   updateMessageStatus: (messageId: string, status: Partial<MessageType['status']>) => void;
@@ -38,10 +38,10 @@ export const useChatStore = create<ChatStore>()(
     messages: [],
     unreadMessages: {},
 
-    markAsRead: (messageId, userLogin) => {
+    markAsRead: (messageId, userLogin, selectedUser) => {
       set((state) => ({
         messages: state.messages.map((message) =>
-          message.to === userLogin && !message.status.isReaded
+          message.to === userLogin && message.from === selectedUser && !message.status.isReaded
             ? { ...message, status: { ...message.status, isReaded: true } }
             : message,
         ),
@@ -134,12 +134,12 @@ export function handleServerMassageForChat(data: ServerResponse) {
     case 'USER_EXTERNAL_LOGOUT': {
       useChatStore.setState((state) => {
         const updatedUser = data.payload.user;
+        const activeUsers = [...state.activeUsers, updatedUser];
+        const users = state.users.map((u) => (u.login === updatedUser.login ? updatedUser : u));
 
         return {
-          activeUsers: [...state.activeUsers, updatedUser],
-          users: state.users.some((u) => u.login === updatedUser.login)
-            ? state.users.map((u) => (u.login === updatedUser.login ? updatedUser : u))
-            : [...state.users, updatedUser],
+          activeUsers,
+          users,
         };
       });
       break;
@@ -147,12 +147,14 @@ export function handleServerMassageForChat(data: ServerResponse) {
     case 'USER_EXTERNAL_LOGIN': {
       useChatStore.setState((state) => {
         const updatedUser = data.payload.user;
+        const activeUsers = state.activeUsers.filter((u) => u.login !== updatedUser.login);
+        const users = state.users.map((u) => (u.login === updatedUser.login ? updatedUser : u));
 
         return {
-          activeUsers: state.activeUsers.filter((u) => u.login !== updatedUser.login),
-          users: state.users.map((u) => (u.login === updatedUser.login ? updatedUser : u)),
+          activeUsers,
+          users,
           messages: state.messages.map((message) =>
-            message.to === data.payload.user.login && !message.status.isDelivered
+            message.to === updatedUser.login && !message.status.isDelivered
               ? { ...message, status: { ...message.status, isDelivered: true } }
               : message,
           ),
@@ -161,7 +163,15 @@ export function handleServerMassageForChat(data: ServerResponse) {
       break;
     }
     case 'MSG_FROM_USER': {
-      useChatStore.setState({ messages: data.payload.messages });
+      useChatStore.setState((state) => ({
+        messages: [
+          ...state.messages,
+          ...data.payload.messages.filter(
+            (newMessage) =>
+              !state.messages.some((existingMessage) => existingMessage.id === newMessage.id),
+          ),
+        ].sort((a, b) => a.datetime - b.datetime),
+      }));
       break;
     }
     case 'MSG_SEND': {
