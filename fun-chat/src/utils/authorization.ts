@@ -18,11 +18,11 @@ export function validatePassword(password: string) {
   if (!password) {
     return 'Password is required';
   }
-  if (password.length <= MIN_LENGTH) {
-    return 'Password must be at least 6 latin letter';
+  if (password.length < MIN_LENGTH) {
+    return `Password must be at least ${MIN_LENGTH} characters long`;
   }
   if (!/^(?=.*[A-Z])(?=.*\d).+$/.test(password)) {
-    return 'Password must include at least 1 number and 1 uppercase letter';
+    return 'Password must contain at least one uppercase latin letter and one number';
   }
   return '';
 }
