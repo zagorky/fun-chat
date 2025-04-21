@@ -9,7 +9,7 @@ const messageHandlers: ((data: ServerResponse) => void)[] = [];
 const RECONNECT_INTERVAL = 3000;
 
 export function connectSocket(url: string) {
-  const { setConnecting, login, password, setReconnecting } = useAuthStore.getState();
+  const { setConnecting } = useAuthStore.getState();
 
   if (
     socket &&
@@ -26,45 +26,13 @@ export function connectSocket(url: string) {
   socket = new WebSocket(url);
   console.log('Connecting WebSocket');
 
-  socket.addEventListener('open', () => {
-    console.log('WebSocket connected');
+  socket.addEventListener('open', onOpen);
 
-    setReconnecting(false);
-    setConnecting(false);
+  socket.addEventListener('message', onMessage);
 
-    if (login && password) {
-      sendLoginMessage(login, password);
-    }
-  });
+  socket.addEventListener('close', () => onClose(url));
 
-  socket.addEventListener('message', (event: MessageEvent) => {
-    try {
-      if (typeof event.data !== 'string') {
-        console.error('Unsupported message type:', typeof event.data);
-        return;
-      }
-      const data: unknown = JSON.parse(event.data);
-
-      if (isMessage<ServerResponse>(data)) {
-        messageHandlers.forEach((handler) => handler(data));
-      }
-    } catch (error) {
-      console.error('Invalid message format', error);
-    }
-  });
-
-  socket.addEventListener('close', () => {
-    console.log(`WebSocket closed`);
-    setConnecting(false);
-    setReconnecting(true);
-
-    setTimeout(() => connectSocket(url), RECONNECT_INTERVAL);
-  });
-
-  socket.addEventListener('error', () => {
-    setConnecting(false);
-    socket?.close();
-  });
+  socket.addEventListener('error', onError);
 }
 
 export function sendWebSocketMessage(message: ClientRequest | ServerResponse) {
@@ -87,3 +55,48 @@ export function disconnectSocket() {
   socket?.close();
   socket = null;
 }
+
+const onOpen = () => {
+  const { setConnecting, login, password, setReconnecting } = useAuthStore.getState();
+
+  console.log('WebSocket connected');
+
+  setReconnecting(false);
+  setConnecting(false);
+
+  if (login && password) {
+    sendLoginMessage(login, password);
+  }
+};
+
+const onMessage = (event: MessageEvent) => {
+  try {
+    if (typeof event.data !== 'string') {
+      console.error('Unsupported message type:', typeof event.data);
+      return;
+    }
+    const data: unknown = JSON.parse(event.data);
+
+    if (isMessage<ServerResponse>(data)) {
+      messageHandlers.forEach((handler) => handler(data));
+    }
+  } catch (error) {
+    console.error('Invalid message format', error);
+  }
+};
+
+const onClose = (url: string) => {
+  const { setConnecting, setReconnecting } = useAuthStore.getState();
+
+  console.log(`WebSocket closed`);
+  setConnecting(false);
+  setReconnecting(true);
+
+  setTimeout(() => connectSocket(url), RECONNECT_INTERVAL);
+};
+
+const onError = () => {
+  const { setConnecting } = useAuthStore.getState();
+  setConnecting(false);
+  socket?.close();
+};
