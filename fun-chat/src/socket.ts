@@ -1,11 +1,11 @@
-import type { ClientRequest, ServerResponse } from './types/types.ts';
+import type { ClientRequest, ServerMessage } from './types/types.ts';
 import { isMessage } from './types/helpers.ts';
 import { useAuthStore } from './stores/use-auth-store.ts';
 import { hasSome } from '@powwow-js/core';
 import { sendLoginMessage } from './utils/authorization.ts';
 
 let socket: WebSocket | null = null;
-const messageHandlers: ((data: ServerResponse) => void)[] = [];
+const messageHandlers: ((data: ServerMessage) => void)[] = [];
 const RECONNECT_INTERVAL = 3000;
 
 export function connectSocket(url: string) {
@@ -35,13 +35,13 @@ export function connectSocket(url: string) {
   socket.addEventListener('error', onError);
 }
 
-export function sendWebSocketMessage(message: ClientRequest | ServerResponse) {
+export function sendWebSocketMessage(message: ClientRequest | ServerMessage) {
   if (hasSome(socket) && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify(message));
   }
 }
 
-export function subscribeToMessages(handler: (data: ServerResponse) => void) {
+export function subscribeToMessages(handler: (data: ServerMessage) => void) {
   messageHandlers.push(handler);
   return () => {
     const index = messageHandlers.indexOf(handler);
@@ -77,7 +77,7 @@ const onMessage = (event: MessageEvent) => {
     }
     const data: unknown = JSON.parse(event.data);
 
-    if (isMessage<ServerResponse>(data)) {
+    if (isMessage<ServerMessage>(data)) {
       messageHandlers.forEach((handler) => handler(data));
     }
   } catch (error) {

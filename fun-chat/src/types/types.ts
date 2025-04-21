@@ -48,7 +48,7 @@ export type BaseMessage<T extends string, P> = {
   payload: P;
 };
 
-export type ServerResponse =
+export type ServerMessage =
   | BaseMessage<
       'USER_LOGIN' | 'USER_LOGOUT' | 'USER_EXTERNAL_LOGIN' | 'USER_EXTERNAL_LOGOUT',
       {

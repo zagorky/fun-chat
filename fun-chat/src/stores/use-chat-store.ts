@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { MessageType, ServerResponse, UserType } from '../types/types.ts';
+import type { MessageType, ServerMessage, UserType } from '../types/types.ts';
 import { useAuthStore } from './use-auth-store.ts';
 import {
   sendDeleteMessageToServer,
@@ -97,7 +97,7 @@ export const useChatStore = create<ChatStore>()(
   })),
 );
 
-export function handleServerMassageForChat(data: ServerResponse) {
+export function handleServerMassageForChat(data: ServerMessage) {
   switch (data.type) {
     case 'USER_ACTIVE': {
       useChatStore.setState((state) => {

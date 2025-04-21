@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { validateLogin, validatePassword } from '../utils/authorization.ts';
-import type { ServerResponse } from '../types/types.ts';
+import type { ServerMessage } from '../types/types.ts';
 import { persist, devtools, createJSONStorage } from 'zustand/middleware';
 import { getUsersUtility } from '../utils/get-users.ts';
 
@@ -104,7 +104,7 @@ export const useAuthStore = create<AuthStore>()(
   ),
 );
 
-export const handleServerMessageForAuth = (data: ServerResponse) => {
+export const handleServerMessageForAuth = (data: ServerMessage) => {
   if (data.type === 'USER_LOGIN') {
     if (data.payload.user.isLogined) {
       useAuthStore.getState().loginSuccess();
