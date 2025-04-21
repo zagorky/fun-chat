@@ -1,7 +1,7 @@
 import { Button } from '../button/button.tsx';
 import { Link } from '@tanstack/react-router';
 import { useAuthStore } from '../../stores/use-auth-store.ts';
-import { handleLogout } from '../../utils/authorization.ts';
+import { handleLogout } from '../../api/utils/authorization.ts';
 
 export function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);

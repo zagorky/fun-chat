@@ -1,7 +1,7 @@
 import { sendWebSocketMessage } from '../socket.ts';
-import { useChatStore } from '../stores/use-chat-store.ts';
-import { useAuthStore } from '../stores/use-auth-store.ts';
-import type { UserType } from '../types/types.ts';
+import { useChatStore } from '../../stores/use-chat-store.ts';
+import { useAuthStore } from '../../stores/use-auth-store.ts';
+import type { UserType } from '../../types/types.ts';
 
 export function getUsersUtility() {
   useChatStore.setState({ error: null });

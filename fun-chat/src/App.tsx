@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { connectSocket, disconnectSocket } from './socket.ts';
+import { connectSocket, disconnectSocket } from './api/socket.ts';
 import { RouterProvider } from '@tanstack/react-router';
 import { router } from './router.tsx';
 import { Loader } from './components/loader/loader.tsx';

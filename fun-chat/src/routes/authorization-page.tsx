@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { AuthorizationForm } from '../components/authorization-form/authorization-form.tsx';
 import { useNavigate } from '@tanstack/react-router';
 import { handleServerMessageForAuth, useAuthStore } from '../stores/use-auth-store.ts';
-import { subscribeToMessages } from '../socket.ts';
+import { subscribeToMessages } from '../api/socket.ts';
 import { Layout } from '../components/layout/layout.tsx';
 
 export default function AuthorizationPage() {

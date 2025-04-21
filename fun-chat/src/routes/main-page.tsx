@@ -3,8 +3,8 @@ import { useNavigate } from '@tanstack/react-router';
 import { handleServerMessageForAuth, useAuthStore } from '../stores/use-auth-store.ts';
 import { UserList } from '../components/user-list/user-list.tsx';
 import { Chat } from '../components/chat/chat.tsx';
-import { subscribeToMessages } from '../socket.ts';
-import { handleServerMassageForChat, useChatStore } from '../stores/use-chat-store.ts';
+import { subscribeToMessages } from '../api/socket.ts';
+import { handleServerMessageForChat, useChatStore } from '../stores/use-chat-store.ts';
 import { Layout } from '../components/layout/layout.tsx';
 import type { ServerMessage } from '../types/types.ts';
 
@@ -21,7 +21,7 @@ export default function MainPage() {
   useEffect(() => {
     const handleServerMessage = (message: ServerMessage) => {
       handleServerMessageForAuth(message);
-      handleServerMassageForChat(message);
+      handleServerMessageForChat(message);
       if (message.type === 'USER_EXTERNAL_LOGIN' || message.type === 'USER_EXTERNAL_LOGOUT') {
         useChatStore.getState().getUsers();
       }

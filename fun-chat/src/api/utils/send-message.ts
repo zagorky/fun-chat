@@ -1,6 +1,6 @@
-import type { MessageType } from '../types/types.ts';
+import type { MessageType } from '../../types/types.ts';
 import { sendWebSocketMessage } from '../socket.ts';
-import { useChatStore } from '../stores/use-chat-store.ts';
+import { useChatStore } from '../../stores/use-chat-store.ts';
 
 export function sendMessageToServer(from: string, to: string, message: string) {
   const newMessage: MessageType = {

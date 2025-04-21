@@ -1,6 +1,6 @@
-import type { ClientRequest, ServerMessage } from './types/types.ts';
-import { isMessage } from './types/helpers.ts';
-import { useAuthStore } from './stores/use-auth-store.ts';
+import type { ClientRequest, ServerMessage } from '../types/types.ts';
+import { isMessage } from '../types/helpers.ts';
+import { useAuthStore } from '../stores/use-auth-store.ts';
 import { hasSome } from '@powwow-js/core';
 import { sendLoginMessage } from './utils/authorization.ts';
 
