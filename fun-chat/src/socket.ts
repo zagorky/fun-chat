@@ -2,6 +2,7 @@ import type { ClientRequest, ServerResponse } from './types/types.ts';
 import { isMessage } from './types/helpers.ts';
 import { useAuthStore } from './stores/use-auth-store.ts';
 import { hasSome } from '@powwow-js/core';
+import { sendLoginMessage } from './utils/authorization.ts';
 
 let socket: WebSocket | null = null;
 const messageHandlers: ((data: ServerResponse) => void)[] = [];
@@ -10,7 +11,12 @@ const RECONNECT_INTERVAL = 3000;
 export function connectSocket(url: string) {
   const { setConnecting, login, password, setReconnecting } = useAuthStore.getState();
 
-  if (socket && socket.readyState === WebSocket.OPEN) return;
+  if (
+    socket &&
+    (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)
+  )
+    return;
+
   setConnecting(true);
 
   if (socket) {
@@ -27,11 +33,7 @@ export function connectSocket(url: string) {
     setConnecting(false);
 
     if (login && password) {
-      sendWebSocketMessage({
-        id: crypto.randomUUID(),
-        type: 'USER_LOGIN',
-        payload: { user: { login, password } },
-      });
+      sendLoginMessage(login, password);
     }
   });
 
@@ -51,16 +53,15 @@ export function connectSocket(url: string) {
     }
   });
 
-  socket.addEventListener('close', (event) => {
-    console.log(`WebSocket closed: ${event.reason}`);
+  socket.addEventListener('close', () => {
+    console.log(`WebSocket closed`);
     setConnecting(false);
     setReconnecting(true);
 
     setTimeout(() => connectSocket(url), RECONNECT_INTERVAL);
   });
 
-  socket.addEventListener('error', (event) => {
-    console.warn('WebSocket error', event);
+  socket.addEventListener('error', () => {
     setConnecting(false);
     socket?.close();
   });

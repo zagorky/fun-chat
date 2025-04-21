@@ -9,6 +9,7 @@ function App() {
     connectSocket('ws://localhost:4000');
     return () => disconnectSocket();
   }, []);
+
   return (
     <>
       <RouterProvider router={router} />
