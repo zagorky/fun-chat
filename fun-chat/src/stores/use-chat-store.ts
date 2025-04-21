@@ -7,8 +7,8 @@ import {
   sendEditMessageToServer,
   sendMessageToServer,
   sendReadMessageToServer,
-} from '../utils/send-message.ts';
-import { getUserHistory, getUsersHistory, getUsersUtility } from '../utils/get-users.ts';
+} from '../api/utils/send-message.ts';
+import { getUserHistory, getUsersHistory, getUsersUtility } from '../api/utils/get-users.ts';
 
 type ChatStore = {
   users: UserType[];
@@ -16,12 +16,9 @@ type ChatStore = {
   selectedUser: UserType | null;
   messages: MessageType[];
   error: string | null;
-  searchQuery: string;
   getUsers: () => void;
   setSelectedUser: (user: UserType) => void;
   sendMessage: (currentUser: string, message: string) => void;
-  incrementUnread: (userLogin: string) => void;
-  resetUnread: (userLogin: string) => void;
   markAsRead: (messageId: string, userLogin: string, selectedUser: string) => void;
   deleteMessage: (messageId: string) => void;
   editMessage: (messageId: string, text: string) => void;
@@ -32,12 +29,19 @@ export const useChatStore = create<ChatStore>()(
   devtools((set, get) => ({
     users: [],
     activeUsers: [],
-    error: null,
-    searchQuery: '',
     selectedUser: null,
     messages: [],
-    unreadMessages: {},
-
+    error: null,
+    getUsers: () => getUsersUtility(),
+    setSelectedUser: (user) => {
+      getUserHistory(user);
+      set({ selectedUser: user });
+    },
+    sendMessage: (currentUser, message) => {
+      const state = get();
+      if (!state.selectedUser) return;
+      sendMessageToServer(currentUser, state.selectedUser.login, message);
+    },
     markAsRead: (messageId, userLogin, selectedUser) => {
       set((state) => ({
         messages: state.messages.map((message) =>
@@ -48,7 +52,6 @@ export const useChatStore = create<ChatStore>()(
       }));
       sendReadMessageToServer(messageId);
     },
-
     deleteMessage: (messageId) => {
       const state = get();
 
@@ -84,20 +87,10 @@ export const useChatStore = create<ChatStore>()(
         ),
       }));
     },
-    getUsers: () => getUsersUtility(),
-    setSelectedUser: (user) => {
-      getUserHistory(user);
-      set({ selectedUser: user });
-    },
-    sendMessage: (currentUser, message) => {
-      const state = get();
-      if (!state.selectedUser) return;
-      sendMessageToServer(currentUser, state.selectedUser.login, message);
-    },
   })),
 );
 
-export function handleServerMassageForChat(data: ServerMessage) {
+export function handleServerMessageForChat(data: ServerMessage) {
   switch (data.type) {
     case 'USER_ACTIVE': {
       useChatStore.setState((state) => {

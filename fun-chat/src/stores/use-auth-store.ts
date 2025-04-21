@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import { validateLogin, validatePassword } from '../utils/authorization.ts';
+import { validateLogin, validatePassword } from '../api/utils/authorization.ts';
 import type { ServerMessage } from '../types/types.ts';
 import { persist, devtools, createJSONStorage } from 'zustand/middleware';
-import { getUsersUtility } from '../utils/get-users.ts';
+import { getUsersUtility } from '../api/utils/get-users.ts';
 
 type AuthStore = {
   login: string;
@@ -13,6 +13,8 @@ type AuthStore = {
   };
   authError: string;
   isAuthenticated: boolean;
+  isConnecting: boolean;
+  isReconnecting: boolean;
   setLogin: (login: string) => void;
   setPassword: (password: string) => void;
   setErrors: (errors: { login: string; password: string }) => void;
@@ -20,9 +22,7 @@ type AuthStore = {
   loginFailure: (error: string) => void;
   clearAuthError: () => void;
   logout: () => void;
-  isReconnecting: boolean;
   setReconnecting: (value: boolean) => void;
-  isConnecting: boolean;
   setConnecting: (value: boolean) => void;
 };
 
@@ -40,10 +40,8 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: false,
         isReconnecting: false,
         isConnecting: false,
-
         setReconnecting: (value) => set({ isReconnecting: value }, false, 'setReconnecting'),
         setConnecting: (value) => set({ isConnecting: value }, false, 'setConnecting'),
-
         setLogin: (login) =>
           set(
             (state) => ({
@@ -56,7 +54,6 @@ export const useAuthStore = create<AuthStore>()(
             false,
             'setLogin',
           ),
-
         setPassword: (password) =>
           set(
             (state) => ({
@@ -69,16 +66,11 @@ export const useAuthStore = create<AuthStore>()(
             false,
             'setPassword',
           ),
-
         setErrors: (errors) => set({ errors }, false, 'setErrors'),
-
         loginSuccess: () => set({ isAuthenticated: true, authError: '' }, false, 'loginSuccess'),
-
         loginFailure: (error) =>
           set({ authError: error, isAuthenticated: false }, false, 'loginFailure'),
-
         clearAuthError: () => set({ authError: '' }, false, 'clearAuthError'),
-
         logout: () => {
           set(
             {
@@ -105,18 +97,26 @@ export const useAuthStore = create<AuthStore>()(
 );
 
 export const handleServerMessageForAuth = (data: ServerMessage) => {
-  if (data.type === 'USER_LOGIN') {
-    if (data.payload.user.isLogined) {
-      useAuthStore.getState().loginSuccess();
-      getUsersUtility();
-    } else {
-      useAuthStore.getState().loginFailure('Login failed: unknown reason');
+  switch (data.type) {
+    case 'USER_LOGIN': {
+      if (data.payload.user.isLogined) {
+        useAuthStore.getState().loginSuccess();
+        getUsersUtility();
+      } else {
+        useAuthStore.getState().loginFailure('Login failed: unknown reason');
+      }
+      break;
     }
-  } else if (data.type === 'USER_LOGOUT' && !data.payload.user.isLogined) {
-    useAuthStore.getState().logout();
-  }
-  if (data.type === 'ERROR') {
-    const error = data.payload.error;
-    useAuthStore.getState().loginFailure(error);
+    case 'USER_LOGOUT': {
+      if (!data.payload.user.isLogined) {
+        useAuthStore.getState().logout();
+      }
+      break;
+    }
+    case 'ERROR': {
+      const error = data.payload.error;
+      useAuthStore.getState().loginFailure(error);
+      break;
+    }
   }
 };
