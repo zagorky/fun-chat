@@ -10,7 +10,8 @@ type ChatFormProps = {
 
 export function ChatForm({ onClick }: ChatFormProps) {
   const [message, setMessage] = useState('');
-  const { selectedUser, sendMessage } = useChatStore();
+  const selectedUser = useChatStore((state) => state.selectedUser);
+  const sendMessage = useChatStore((state) => state.sendMessage);
   const currentUser = useAuthStore((state) => state.login);
 
   const handleSendMessage = (event: React.FormEvent) => {
